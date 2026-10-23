@@ -1928,6 +1928,7 @@ const validSettingKeys: Set<string> = new Set([
   'globalShortcut',
   'keyboardShortcuts',
   'theme',
+  'townshipProfile',
   'useSystemTheme',
   'language',
   'responseStyle',

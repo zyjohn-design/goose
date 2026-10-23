@@ -1,3 +1,11 @@
+import type { ThemeId } from '../theme/theme-tokens';
+
+export type TownshipProfile = {
+  displayName: string;
+  department: string;
+  organization: string;
+};
+
 export type RecentModel = {
   provider: string;
   model: string;
@@ -48,7 +56,8 @@ export interface Settings {
   keyboardShortcuts: KeyboardShortcuts;
 
   // UI preferences (migrated from localStorage)
-  theme: 'dark' | 'light' | 'aura';
+  theme: ThemeId;
+  townshipProfile: TownshipProfile;
   useSystemTheme: boolean;
   language: LanguageSetting;
   responseStyle: string;
@@ -90,6 +99,7 @@ export const defaultSettings: Settings = {
 
   // UI preferences
   theme: 'light',
+  townshipProfile: { displayName: '张主任', department: '党政办公室', organization: '' },
   useSystemTheme: true,
   language: 'system',
   responseStyle: 'concise',

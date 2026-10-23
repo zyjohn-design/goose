@@ -1,5 +1,7 @@
 # 政务智办 · 镇政府 Harness 界面设计
 
+第二轮更新见 [主题中心与三套 Light / Dark 方案](v2/README.md) 和 [第二版预览](v2/index.html)。新增主题中心、账户弹窗源码及本机档案 MCP / Skill 接入配置。以下为首轮设计记录。
+
 本目录是 Goose 镇政府定制分支的首轮视觉设计交付。产品名“政务智办”、单位、姓名、应用和连接状态均为设计示例，可按实际单位替换。
 
 - 基础仓库：https://github.com/zyjohn-design/goose

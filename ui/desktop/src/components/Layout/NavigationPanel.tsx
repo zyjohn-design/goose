@@ -1,6 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation } from 'react-router';
-import { AudioLines, ChevronDown, ChevronRight } from 'lucide-react';
+import { AudioLines, ChevronDown, ChevronRight, Palette } from 'lucide-react';
+import TownshipAccountMenu from '../settings/TownshipAccountMenu';
+import { ThemeCenterDialog } from '../settings/ThemeCenter';
 import { motion } from 'framer-motion';
 import { useNavigationContext } from './NavigationContext';
 import { useConfig } from '../ConfigContext';
@@ -29,6 +31,7 @@ interface SessionStatus {
 }
 
 const i18n = defineMessages({
+  themes: { id: 'township.themes.title', defaultMessage: 'Theme center' },
   chats: {
     id: 'navigationPanel.chats',
     defaultMessage: 'Chats',
@@ -310,6 +313,8 @@ export const Navigation: React.FC<{
   }, [isNavExpanded, fetchSessions]);
 
   const [isChatsExpanded, setIsChatsExpanded] = useState(true);
+  const [themesOpen, setThemesOpen] = useState(false);
+  const themeButtonRef = useRef<HTMLButtonElement>(null);
   const [collapsedProjects, setCollapsedProjects] = useState<Set<string>>(new Set());
 
   const toggleProjectCollapsed = useCallback((path: string) => {
@@ -424,12 +429,27 @@ export const Navigation: React.FC<{
       </div>
 
       <div className="px-2 pt-2 pb-2 border-t border-border-secondary">
+        <button
+          type="button"
+          className={navItemClass(themesOpen)}
+          onClick={() => setThemesOpen(true)}
+          ref={themeButtonRef}
+        >
+          <Palette className="h-5 w-5 text-text-secondary" />
+          <span>{intl.formatMessage(i18n.themes)}</span>
+        </button>
         <NavRow
           item={SETTINGS_NAV_ITEM}
           active={isActive(SETTINGS_NAV_ITEM.path)}
           onClick={() => handleNavClick(SETTINGS_NAV_ITEM.path)}
         />
+        <TownshipAccountMenu />
       </div>
+      <ThemeCenterDialog
+        open={themesOpen}
+        onOpenChange={setThemesOpen}
+        returnFocusRef={themeButtonRef}
+      />
     </motion.div>
   );
 };

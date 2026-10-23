@@ -4768,5 +4768,77 @@
   },
   "settings.agentLoop.title": {
     "defaultMessage": "代理循环"
+  },
+  "township.account.connections": {
+    "defaultMessage": "连接管理"
+  },
+  "township.account.department": {
+    "defaultMessage": "所属部门"
+  },
+  "township.account.description": {
+    "defaultMessage": "资料保存在本机，尚未接入单位统一登录。"
+  },
+  "township.account.loadFailed": {
+    "defaultMessage": "资料加载失败，请重新打开菜单重试。"
+  },
+  "township.account.loading": {
+    "defaultMessage": "正在加载资料…"
+  },
+  "township.account.local": {
+    "defaultMessage": "本地资料 · 尚未登录"
+  },
+  "township.account.models": {
+    "defaultMessage": "模型服务"
+  },
+  "township.account.name": {
+    "defaultMessage": "显示姓名"
+  },
+  "township.account.organization": {
+    "defaultMessage": "所在单位"
+  },
+  "township.account.profile": {
+    "defaultMessage": "个人资料"
+  },
+  "township.account.save": {
+    "defaultMessage": "保存资料"
+  },
+  "township.account.saveFailed": {
+    "defaultMessage": "资料保存失败，请重试。"
+  },
+  "township.account.settings": {
+    "defaultMessage": "全部设置"
+  },
+  "township.account.title": {
+    "defaultMessage": "账户与设置"
+  },
+  "township.archive.evidence": {
+    "defaultMessage": "档案证据助手"
+  },
+  "township.archive.management": {
+    "defaultMessage": "档案管理 MCP"
+  },
+  "township.archive.review": {
+    "defaultMessage": "档案审核"
+  },
+  "township.themes.active": {
+    "defaultMessage": "使用中"
+  },
+  "township.themes.dark": {
+    "defaultMessage": "深色 Dark"
+  },
+  "township.themes.description": {
+    "defaultMessage": "三套政务主题，均支持浅色与深色。切换后自动保存。"
+  },
+  "township.themes.light": {
+    "defaultMessage": "浅色 Light"
+  },
+  "township.themes.original": {
+    "defaultMessage": "Goose 原生主题"
+  },
+  "township.themes.system": {
+    "defaultMessage": "跟随系统，保留当前配色"
+  },
+  "township.themes.title": {
+    "defaultMessage": "主题中心"
   }
 }
