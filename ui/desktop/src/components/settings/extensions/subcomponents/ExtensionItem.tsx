@@ -6,8 +6,10 @@ import { FixedExtensionEntry } from '../../../ConfigContext';
 import { getSubtitle, getFriendlyTitle } from './ExtensionList';
 import { Card, CardHeader, CardTitle, CardContent, CardAction } from '../../../ui/card';
 import { defineMessages, useIntl } from '../../../../i18n';
+import { Archive, Puzzle } from 'lucide-react';
 
 const i18n = defineMessages({
+  archive: { id: 'township.archive.management', defaultMessage: 'Archive management MCP' },
   configureExtension: {
     id: 'extensionItem.configureExtension',
     defaultMessage: 'Configure {name} Extension',
@@ -32,6 +34,8 @@ export default function ExtensionItem({
   isStatic,
 }: ExtensionItemProps) {
   const intl = useIntl();
+  const isArchive = extension.name === 'personnel-archive';
+  const Icon = isArchive ? Archive : Puzzle;
   // Add local state to track the visual toggle state
   const [visuallyEnabled, setVisuallyEnabled] = useState(extension.enabled);
   // Track if we're in the process of toggling
@@ -90,7 +94,15 @@ export default function ExtensionItem({
       className="transition-all duration-200 min-h-[120px] overflow-hidden"
     >
       <CardHeader>
-        <CardTitle>{getFriendlyTitle(extension)}</CardTitle>
+        <CardTitle className="flex items-center gap-3">
+          <span
+            aria-hidden="true"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-background-tertiary"
+          >
+            <Icon className="h-5 w-5" />
+          </span>
+          {isArchive ? intl.formatMessage(i18n.archive) : getFriendlyTitle(extension)}
+        </CardTitle>
 
         <CardAction>
           <div className="flex items-center justify-end gap-2">

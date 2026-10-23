@@ -3,6 +3,7 @@ import { Recipe } from './recipe';
 import type { GooseApp } from './types/apps';
 import type { Settings, SettingKey } from './utils/settings';
 import { defaultSettings } from './utils/settings';
+import { isThemeId } from './theme/theme-tokens';
 import type { OpenExternalUrlResult } from './utils/urlSecurity';
 
 // Mapping from settings keys to their old localStorage keys for lazy migration
@@ -22,7 +23,7 @@ function parseLocalStorageValue<K extends SettingKey>(
   try {
     switch (key) {
       case 'theme':
-        return (rawValue === 'dark' || rawValue === 'light' ? rawValue : null) as Settings[K];
+        return (isThemeId(rawValue) ? rawValue : null) as Settings[K];
       case 'useSystemTheme':
         return (rawValue === 'true') as unknown as Settings[K];
       case 'responseStyle':

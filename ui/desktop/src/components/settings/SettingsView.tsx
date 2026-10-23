@@ -28,9 +28,12 @@ import { trackSettingsTabViewed } from '../../utils/analytics';
 import { useFeatures } from '../../contexts/FeaturesContext';
 import { defineMessages, useIntl } from '../../i18n';
 import BackButton from '../ui/BackButton';
+import { ThemeCenter } from './ThemeCenter';
+import { Palette } from 'lucide-react';
 import { useNavigationContext } from '../Layout/NavigationContext';
 
 const i18n = defineMessages({
+  tabThemes: { id: 'township.themes.title', defaultMessage: 'Theme center' },
   title: {
     id: 'settingsView.title',
     defaultMessage: 'Settings',
@@ -94,6 +97,7 @@ export default function SettingsView({
   const intl = useIntl();
 
   const activeTabTitle = {
+    themes: intl.formatMessage(i18n.tabThemes),
     models: intl.formatMessage(i18n.tabModels),
     'local-inference': intl.formatMessage(i18n.tabLocalInference),
     chat: intl.formatMessage(i18n.tabChat),
@@ -114,6 +118,7 @@ export default function SettingsView({
     if (viewOptions.section) {
       // Map section names to tab values
       const sectionToTab: Record<string, string> = {
+        themes: 'themes',
         update: 'app',
         models: 'models',
         modes: 'chat',
@@ -186,6 +191,10 @@ export default function SettingsView({
               />
             </div>
             <TabsList className="w-full flex-col items-stretch gap-0.5 bg-transparent px-2 py-0">
+              <TabsTrigger value="themes" className={settingsTabClass}>
+                <Palette className="h-5 w-5 text-text-secondary" />
+                {intl.formatMessage(i18n.tabThemes)}
+              </TabsTrigger>
               <TabsTrigger
                 value="models"
                 className={settingsTabClass}
@@ -244,11 +253,7 @@ export default function SettingsView({
                 <KeyRound className="h-5 w-5 text-text-secondary" />
                 {intl.formatMessage(i18n.tabAuth)}
               </TabsTrigger>
-              <TabsTrigger
-                value="app"
-                className={settingsTabClass}
-                data-testid="settings-app-tab"
-              >
+              <TabsTrigger value="app" className={settingsTabClass} data-testid="settings-app-tab">
                 <Monitor className="h-5 w-5 text-text-secondary" />
                 {intl.formatMessage(i18n.tabApp)}
               </TabsTrigger>
@@ -265,6 +270,12 @@ export default function SettingsView({
 
           <ScrollArea className="min-h-0 flex-1 px-12">
             <div className="mx-auto max-w-5xl pb-10">
+              <TabsContent
+                value="themes"
+                className="mt-0 focus-visible:outline-none focus-visible:ring-0"
+              >
+                <ThemeCenter />
+              </TabsContent>
               <TabsContent
                 value="models"
                 className="mt-0 focus-visible:outline-none focus-visible:ring-0"

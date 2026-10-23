@@ -29,7 +29,7 @@ parameters:
     input_type: string
     requirement: optional
     default: "all"
-    description: "Which test phases to run: all, basic, extensions, delegation, code-mode, declared-vision, reasoning, zai-coding-plan, acp-effort, compaction, advanced"
+    description: "Which test phases to run: all, basic, extensions, delegation, code-mode, declared-vision, reasoning, zai-coding-plan, acp-effort, compaction, advanced, township-ui"
 
   - key: test_depth
     input_type: string
@@ -600,6 +600,17 @@ prompt: |
   {% endif %}
 
   ## 🎯 META-TESTING NOTES
+  When test_phases is township-ui, use an available local Desktop UI to check the
+  township customization. Open the account menu, confirm it identifies local profile
+  data as not signed in, edit and restore a temporary display name, and verify focus
+  returns to its trigger after closing the profile dialog. Apply the six township
+  light/dark themes, restart to verify persistence, then follow system appearance and
+  confirm the selected palette is preserved. Check that the archive extension and
+  review skill are listed with icons; distinguish a registered extension from a live
+  authorized service. Do not query personnel records or submit revisions merely to
+  test this UI. If no Desktop UI or archive credentials are available, mark the
+  corresponding check skipped instead of inferring success from design images.
+
   Remember: You are testing yourself. This is recursive validation where:
   - Success means your tools work as expected
   - Failure reveals areas needing attention

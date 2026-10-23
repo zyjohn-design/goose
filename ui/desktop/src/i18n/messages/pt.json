@@ -4768,5 +4768,77 @@
   },
   "settings.agentLoop.title": {
     "defaultMessage": "Loop do agente"
+  },
+  "township.account.connections": {
+    "defaultMessage": "Connections"
+  },
+  "township.account.department": {
+    "defaultMessage": "Department"
+  },
+  "township.account.description": {
+    "defaultMessage": "This profile is stored on this device. Organization sign-in has not been connected."
+  },
+  "township.account.loadFailed": {
+    "defaultMessage": "Could not load the profile. Reopen the menu to try again."
+  },
+  "township.account.loading": {
+    "defaultMessage": "Loading profile…"
+  },
+  "township.account.local": {
+    "defaultMessage": "Local profile · Not signed in"
+  },
+  "township.account.models": {
+    "defaultMessage": "Model services"
+  },
+  "township.account.name": {
+    "defaultMessage": "Display name"
+  },
+  "township.account.organization": {
+    "defaultMessage": "Organization"
+  },
+  "township.account.profile": {
+    "defaultMessage": "Personal profile"
+  },
+  "township.account.save": {
+    "defaultMessage": "Save profile"
+  },
+  "township.account.saveFailed": {
+    "defaultMessage": "Could not save the profile. Please try again."
+  },
+  "township.account.settings": {
+    "defaultMessage": "All settings"
+  },
+  "township.account.title": {
+    "defaultMessage": "Account and settings"
+  },
+  "township.archive.evidence": {
+    "defaultMessage": "Archive evidence assistant"
+  },
+  "township.archive.management": {
+    "defaultMessage": "Archive management MCP"
+  },
+  "township.archive.review": {
+    "defaultMessage": "Archive review"
+  },
+  "township.themes.active": {
+    "defaultMessage": "In use"
+  },
+  "township.themes.dark": {
+    "defaultMessage": "Dark"
+  },
+  "township.themes.description": {
+    "defaultMessage": "Three civic palettes, each with light and dark appearances. Changes are saved automatically."
+  },
+  "township.themes.light": {
+    "defaultMessage": "Light"
+  },
+  "township.themes.original": {
+    "defaultMessage": "Original Goose themes"
+  },
+  "township.themes.system": {
+    "defaultMessage": "Follow system with the current palette"
+  },
+  "township.themes.title": {
+    "defaultMessage": "Theme center"
   }
 }

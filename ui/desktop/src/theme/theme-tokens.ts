@@ -260,8 +260,10 @@ const auraColorTokens: ColorTokens = {
 
 // Aura is monospace-first — override the shared sans family.
 const auraFontTokens: Partial<Pick<ThemeTokens, BaseTokenKey>> = {
-  '--font-sans': 'ui-monospace, "SFMono-Regular", "Menlo", "Cascadia Mono", "Segoe UI Mono", monospace',
-  '--font-mono': 'ui-monospace, "SFMono-Regular", "Menlo", "Cascadia Mono", "Segoe UI Mono", monospace',
+  '--font-sans':
+    'ui-monospace, "SFMono-Regular", "Menlo", "Cascadia Mono", "Segoe UI Mono", monospace',
+  '--font-mono':
+    'ui-monospace, "SFMono-Regular", "Menlo", "Cascadia Mono", "Segoe UI Mono", monospace',
 };
 
 // ---------------------------------------------------------------------------
@@ -277,7 +279,8 @@ export const auraTokens: ThemeTokens = { ...baseTokens, ...auraFontTokens, ...au
 // the token system; `tokens` is the map applied to :root. Adding a future theme
 // is a single entry here plus its token map above.
 // ---------------------------------------------------------------------------
-export type ThemeId = 'light' | 'dark' | 'aura';
+export type TownshipThemeFamily = 'civic' | 'navy' | 'forest';
+export type ThemeId = 'light' | 'dark' | 'aura' | `${TownshipThemeFamily}-${ThemeVariant}`;
 export type ThemeVariant = 'light' | 'dark';
 
 interface ThemeDefinition {
@@ -285,11 +288,133 @@ interface ThemeDefinition {
   tokens: ThemeTokens;
 }
 
+export const townshipThemeFamilies = [
+  { id: 'civic', name: '朱砂政务', description: '庄重典雅 · 朱砂与暖白', accent: '#A52830' },
+  { id: 'navy', name: '深蓝政务', description: '沉稳清晰 · 深蓝与银灰', accent: '#234F78' },
+  { id: 'forest', name: '青山雅政', description: '温润有序 · 青山与米白', accent: '#285D50' },
+] as const;
+
+function townshipTokens(
+  variant: ThemeVariant,
+  accent: string,
+  canvas: string,
+  surface: string,
+  elevated: string,
+  text: string,
+  secondary: string,
+  border: string
+): ThemeTokens {
+  return {
+    ...(variant === 'light' ? lightTokens : darkTokens),
+    '--font-sans': "'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', sans-serif",
+    '--color-background-primary': surface,
+    '--color-background-secondary': canvas,
+    '--color-background-tertiary': elevated,
+    '--color-background-inverse': accent,
+    '--color-text-primary': text,
+    '--color-text-secondary': secondary,
+    '--color-text-tertiary': secondary,
+    '--color-text-ghost': secondary,
+    '--color-text-inverse': '#FFFFFF',
+    '--color-border-primary': border,
+    '--color-border-secondary': border,
+    '--color-border-tertiary': border,
+    '--color-ring-primary': accent,
+  };
+}
+
 export const themes: Record<ThemeId, ThemeDefinition> = {
   light: { variant: 'light', tokens: lightTokens },
   dark: { variant: 'dark', tokens: darkTokens },
   aura: { variant: 'dark', tokens: auraTokens },
+  'civic-light': {
+    variant: 'light',
+    tokens: townshipTokens(
+      'light',
+      '#A52830',
+      '#F7F5F1',
+      '#FFFFFF',
+      '#F7EDEE',
+      '#252B32',
+      '#636974',
+      '#E4E1DA'
+    ),
+  },
+  'civic-dark': {
+    variant: 'dark',
+    tokens: townshipTokens(
+      'dark',
+      '#A52830',
+      '#19191C',
+      '#232326',
+      '#343035',
+      '#EEEAE4',
+      '#B8B3BA',
+      '#4C464D'
+    ),
+  },
+  'navy-light': {
+    variant: 'light',
+    tokens: townshipTokens(
+      'light',
+      '#234F78',
+      '#F3F6FA',
+      '#FFFFFF',
+      '#E7EEF7',
+      '#152A3D',
+      '#57677A',
+      '#DCE3EC'
+    ),
+  },
+  'navy-dark': {
+    variant: 'dark',
+    tokens: townshipTokens(
+      'dark',
+      '#234F78',
+      '#111B29',
+      '#1A293B',
+      '#273D56',
+      '#E8EEF6',
+      '#ACBED2',
+      '#3B526C'
+    ),
+  },
+  'forest-light': {
+    variant: 'light',
+    tokens: townshipTokens(
+      'light',
+      '#285D50',
+      '#F5F5EF',
+      '#FFFFFF',
+      '#E8F0EA',
+      '#25332D',
+      '#596B60',
+      '#DEE5DC'
+    ),
+  },
+  'forest-dark': {
+    variant: 'dark',
+    tokens: townshipTokens(
+      'dark',
+      '#285D50',
+      '#131E1A',
+      '#1D2C26',
+      '#2A4035',
+      '#E9EEE8',
+      '#A9C1B2',
+      '#3E584A'
+    ),
+  },
 };
+
+export function isThemeId(value: unknown): value is ThemeId {
+  return typeof value === 'string' && Object.hasOwn(themes, value);
+}
+
+export function resolveSystemTheme(savedTheme: ThemeId, variant: ThemeVariant): ThemeId {
+  const family = townshipThemeFamilies.find(({ id }) => savedTheme.startsWith(`${id}-`));
+  return family ? `${family.id}-${variant}` : variant;
+}
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -358,13 +483,16 @@ export function buildMcpHostStyles(themeId: ThemeId = 'light'): McpUiHostStyles 
  * Electron settings store and is applied by ThemeContext once loaded.
  */
 export function getResolvedTheme(): ThemeId {
+  const stored = localStorage.getItem('theme');
+  const savedTheme = isThemeId(stored) ? stored : 'light';
   const useSystem = localStorage.getItem('use_system_theme') !== 'false';
   if (useSystem) {
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    return resolveSystemTheme(
+      savedTheme,
+      window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+    );
   }
-  const stored = localStorage.getItem('theme');
-  if (stored === 'aura') return 'aura';
-  return stored === 'dark' ? 'dark' : 'light';
+  return savedTheme;
 }
 
 /**

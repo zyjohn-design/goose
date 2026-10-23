@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import { Zap, AlertCircle, Plus } from 'lucide-react';
+import { Zap, AlertCircle, Plus, Archive, ShieldCheck } from 'lucide-react';
 import { ScrollArea } from '../ui/scroll-area';
 import { Card } from '../ui/card';
 import { Button } from '../ui/button';
@@ -13,6 +13,11 @@ import { getSearchShortcutText } from '../../utils/keyboardShortcuts';
 import { listSkillSources } from '../../acp/sources';
 
 const i18n = defineMessages({
+  archiveReview: { id: 'township.archive.review', defaultMessage: 'Archive review' },
+  archiveEvidence: {
+    id: 'township.archive.evidence',
+    defaultMessage: 'Archive evidence assistant',
+  },
   errorLoadingSkills: {
     id: 'skillsView.errorLoadingSkills',
     defaultMessage: 'Error Loading Skills',
@@ -66,12 +71,29 @@ interface SkillEntry {
 }
 
 function SkillItem({ skill }: { skill: SkillEntry }) {
+  const intl = useIntl();
+  const review = skill.name === 'personnel-archive-review';
+  const evidence = skill.name === 'personnel-archive';
+  const Icon = review ? ShieldCheck : evidence ? Archive : Zap;
+  const title = review
+    ? intl.formatMessage(i18n.archiveReview)
+    : evidence
+      ? intl.formatMessage(i18n.archiveEvidence)
+      : skill.name;
   return (
     <Card className="py-2 px-4 mb-2 bg-background-primary border-none hover:bg-background-secondary transition-all duration-150">
       <div className="flex justify-between items-center gap-4">
+        <span
+          aria-hidden="true"
+          className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-background-tertiary"
+        >
+          <Icon className="h-6 w-6 text-text-primary" />
+        </span>
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2 mb-1">
-            <h3 className="text-base truncate">{skill.name}</h3>
+            <h3 className="text-base truncate" title={skill.name}>
+              {title}
+            </h3>
           </div>
           <p className="text-text-secondary text-sm line-clamp-2">{skill.description}</p>
         </div>
