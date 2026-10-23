@@ -1,0 +1,38 @@
+{
+  "status": "proposed-front-end-registry",
+  "library": "lucide-react",
+  "note": "示例稳定 ID，实施时绑定真实资源 ID；此文件尚未接入产品。每个资源必须显示独立图标，未知资源按类型兜底。",
+  "fallbacks": { "recipe": "FileText", "skill": "Zap", "app": "AppWindow", "extension": "Puzzle" },
+  "recipes": {
+    "notice-draft": { "label": "通知公告起草", "icon": "FilePenLine", "tone": "vermilion" },
+    "work-report": { "label": "工作报告编写", "icon": "ChartNoAxesCombined", "tone": "slate" },
+    "meeting-minutes": { "label": "会议纪要整理", "icon": "NotebookPen", "tone": "ochre" },
+    "public-requests": { "label": "群众诉求梳理", "icon": "MessagesSquare", "tone": "forest" },
+    "policy-explanation": { "label": "政策解读生成", "icon": "BookOpen", "tone": "slate" },
+    "archive-check": { "label": "档案材料核对", "icon": "Archive", "tone": "ochre" }
+  },
+  "skills": {
+    "document-format": { "label": "公文格式校对", "icon": "FileCheck2", "tone": "vermilion" },
+    "policy-search": { "label": "政策依据检索", "icon": "Search", "tone": "slate" },
+    "archive-review": { "label": "档案合规审核", "icon": "ShieldCheck", "tone": "forest" },
+    "table-analysis": { "label": "表格数据分析", "icon": "ChartColumn", "tone": "ochre" },
+    "meeting-summary": { "label": "会议要点提炼", "icon": "Mic", "tone": "slate" },
+    "text-polish": { "label": "文字润色优化", "icon": "PenLine", "tone": "vermilion" }
+  },
+  "apps": {
+    "meeting-calendar": { "label": "会议日程", "icon": "CalendarDays", "tone": "vermilion" },
+    "document-assistant": { "label": "公文格式助手", "icon": "FileText", "tone": "slate" },
+    "service-guide": { "label": "便民事项指引", "icon": "Landmark", "tone": "forest" },
+    "archive-checklist": { "label": "档案材料清单", "icon": "ClipboardList", "tone": "ochre" },
+    "report-summary": { "label": "报表汇总", "icon": "Sheet", "tone": "slate" },
+    "duty-roster": { "label": "值班安排", "icon": "Clock", "tone": "vermilion" }
+  },
+  "extensions": {
+    "local-files": { "label": "本地文件", "icon": "FolderOpen", "tone": "ochre" },
+    "document-tools": { "label": "文档处理", "icon": "Files", "tone": "vermilion" },
+    "spreadsheet-tools": { "label": "表格工具", "icon": "Table2", "tone": "forest" },
+    "knowledge-base": { "label": "政务知识库", "icon": "LibraryBig", "tone": "slate" },
+    "calendar-service": { "label": "日历服务", "icon": "Calendar", "tone": "vermilion" },
+    "business-connector": { "label": "业务系统连接", "icon": "Plug", "tone": "slate" }
+  }
+}

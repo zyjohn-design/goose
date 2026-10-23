@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>政务智办 · 镇政府界面设计方案</title>
+  <style>
+    :root{color-scheme:light;--red:#a52830;--ink:#252b32;--muted:#636974;--line:#e4e1da;--canvas:#f7f5f1}
+    *{box-sizing:border-box}body{margin:0;background:var(--canvas);color:var(--ink);font:16px/1.6 "PingFang SC","Microsoft YaHei",sans-serif}button,a{-webkit-tap-highlight-color:transparent}a{color:var(--red);text-underline-offset:4px}button{font:inherit;cursor:pointer}button:focus-visible,a:focus-visible{outline:3px solid var(--red);outline-offset:4px}header{padding:32px 40px 24px;background:white;border-top:5px solid var(--red);border-bottom:1px solid var(--line)}.eyebrow{color:var(--red);font-size:13px;font-weight:600;letter-spacing:3px;margin:0 0 8px}h1{font-size:30px;line-height:1.4;margin:0 0 8px}header p{margin:0;color:var(--muted)}.meta{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px;font-size:13px}.meta span{padding:4px 10px;border:1px solid var(--line);border-radius:5px}.layout{max-width:1900px;margin:auto;display:grid;grid-template-columns:230px minmax(0,1fr);gap:24px;padding:28px 40px}nav{display:flex;flex-direction:column;gap:8px}nav button{padding:13px 14px;border:1px solid transparent;background:transparent;color:var(--ink);text-align:left;border-radius:7px;display:flex;gap:13px;align-items:center}nav button span{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}nav button[aria-pressed="true"]{background:#f7edee;color:var(--red);border-color:#ead2d4;font-weight:600}nav button:hover{background:white}nav p{font-size:13px;color:var(--muted);padding:12px 14px}.toolbar{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:16px}.toolbar h2{font-size:23px;margin:0}.toolbar p{font-size:14px;color:var(--muted);margin:4px 0 0}.actions{display:flex;flex-wrap:wrap;gap:10px;flex-shrink:0}.actions a{padding:8px 13px;background:white;border:1px solid var(--line);border-radius:6px;text-decoration:none;font-size:14px}.actions a.primary{background:var(--red);color:white;border-color:var(--red)}figure{margin:0;background:white;border:1px solid var(--line);border-radius:9px;overflow:hidden;box-shadow:0 5px 20px #252b3205}figure a{display:block}figure img{width:100%;height:auto;display:block}figcaption{border-top:1px solid var(--line);padding:10px 16px;color:var(--muted);font-size:13px}.notes{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:20px}.note{padding:17px 20px;border:1px solid var(--line);border-radius:8px;background:white}.note h3{font-size:15px;margin:0 0 6px}.note p{font-size:14px;color:var(--muted);margin:0}.swatches{display:flex;gap:8px;margin-top:12px}.swatches i{height:18px;width:34px;border-radius:3px;border:1px solid #0000000d}footer{max-width:1900px;margin:auto;padding:0 40px 28px;color:var(--muted);font-size:13px}footer a{margin-right:16px}.error{padding:40px;color:var(--red)}
+    @media(max-width:1000px){.layout{grid-template-columns:1fr;padding:20px}header{padding:24px 20px}nav{flex-direction:row;overflow:auto}nav button{white-space:nowrap}nav p{display:none}.notes{grid-template-columns:1fr}.toolbar{flex-wrap:wrap}footer{padding:0 20px 24px}h1{font-size:25px}}
+  </style>
+</head>
+<body>
+  <header>
+    <p class="eyebrow">GOOSE · 镇政府定制分支</p>
+    <h1>政务智办 · 界面设计方案</h1>
+    <p>庄重有序，清晰易用。面向镇政府日常办公的智能工作台。</p>
+    <div class="meta"><span>概念设计 · 2026.10.23</span><span>6 个页面</span><span>政务红 × 暖白 × 深灰</span><span>分支：codex/township-government-harness</span></div>
+  </header>
+  <div class="layout">
+    <nav aria-label="设计页面">
+      <button type="button" data-page="0" aria-pressed="true"><span>01</span>工作台</button>
+      <button type="button" data-page="1" aria-pressed="false"><span>02</span>配方中心</button>
+      <button type="button" data-page="2" aria-pressed="false"><span>03</span>技能中心</button>
+      <button type="button" data-page="3" aria-pressed="false"><span>04</span>应用中心</button>
+      <button type="button" data-page="4" aria-pressed="false"><span>05</span>扩展管理</button>
+      <button type="button" data-page="5" aria-pressed="false"><span>06</span>设置与账户</button>
+      <p>点击页面名称切换设计。点击效果图可查看原图。<br><br>本页为设计图浏览器，图中的按钮、账户及连接状态均为视觉示例。</p>
+    </nav>
+    <main>
+      <div class="toolbar">
+        <div aria-live="polite"><h2 id="screen-title">01 / 工作台</h2><p id="screen-description">对话入口与常用政务能力，保持首页简洁、易读。</p></div>
+        <div class="actions"><a id="original" href="images/01-workbench.png" target="_blank" rel="noopener">查看原图 ↗</a><a id="download" class="primary" href="images/01-workbench.png" download>下载 PNG</a></div>
+      </div>
+      <figure>
+        <a id="image-link" href="images/01-workbench.png" target="_blank" rel="noopener" aria-label="打开当前页面原图"><img id="screen" src="images/01-workbench.png" alt="政务智办工作台设计图，包含左侧功能导航、对话输入框和常用政务能力。"></a>
+        <figcaption>AI 生成视觉方案。实际功能、账户认证、业务系统与连接状态待后续开发接入。</figcaption>
+      </figure>
+      <div class="notes">
+        <div class="note"><h3>庄重 · 克制的政务配色</h3><p>暖白保证阅读舒适度，政务红用于主操作，金色用于少量装饰。</p><div class="swatches" aria-label="方案色板"><i style="background:#a52830" title="政务红"></i><i style="background:#f7f5f1" title="暖白"></i><i style="background:#252b32" title="深灰"></i><i style="background:#b39a67" title="金色"></i></div></div>
+        <div class="note"><h3>每个条目都有独立图标</h3><p>配方、技能、应用、扩展以主题图标识别；后续统一实现卡片、状态和兜底图标。</p></div>
+        <div class="note"><h3>头像与政务账户</h3><p>设置呈现姓名、部门、单位和登录状态；人员身份认证与模型凭据分别管理。</p></div>
+      </div>
+    </main>
+  </div>
+  <footer><a href="README.md">设计说明与开发落点</a><a href="tokens.json">视觉参数</a><a href="icon-map.json">图标建议</a><a href="prompts.json">生成提示词</a><p>本轮交付为视觉设计。图中单位、姓名、资源及数据均为示例，正式文案以设计说明为准。</p></footer>
+  <script>
+    const pages=[
+      {title:'工作台',file:'01-workbench.png',description:'对话入口与常用政务能力，保持首页简洁、易读。'},
+      {title:'配方中心',file:'02-recipes.png',description:'独立图标、用途说明与分类，让常用流程一目了然。'},
+      {title:'技能中心',file:'03-skills.png',description:'每项技能配独立图标，清晰呈现专业能力及规划中的启用状态。'},
+      {title:'应用中心',file:'04-apps.png',description:'以图标卡片集中呈现办公工具和应用启动入口。'},
+      {title:'扩展管理',file:'05-extensions.png',description:'图标、连接状态与配置入口明确呈现。'},
+      {title:'设置与账户',file:'06-settings-account.png',description:'头像、姓名、部门和单位信息集中管理，登录认证待后续接入。'}
+    ];
+    const buttons=Array.from(document.querySelectorAll('nav button'));
+    function showPage(index){
+      const page=pages[index];
+      if(!page)return;
+      buttons.forEach((button,i)=>button.setAttribute('aria-pressed',String(i===index)));
+      document.getElementById('screen-title').textContent=String(index+1).padStart(2,'0')+' / '+page.title;
+      document.getElementById('screen-description').textContent=page.description;
+      const image=document.getElementById('screen');
+      image.src='images/'+page.file;image.alt='政务智办 · '+page.title+'界面设计图。'+page.description;
+      ['original','download','image-link'].forEach(id=>document.getElementById(id).href='images/'+page.file);
+      document.getElementById('download').download=page.file;
+      location.hash=String(index+1);
+    }
+    buttons.forEach(button=>button.addEventListener('click',()=>showPage(Number(button.dataset.page))));
+    window.addEventListener('hashchange',()=>showPage(Number(location.hash.slice(1))-1));
+    if(location.hash)showPage(Number(location.hash.slice(1))-1);
+  </script>
+</body>
+</html>
