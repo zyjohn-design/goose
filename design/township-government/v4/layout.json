@@ -1,0 +1,21 @@
+{
+  "name": "large-chat-compact-workbench",
+  "stage": "visual-concept",
+  "targetCanvas": { "width": 1600, "height": 1000 },
+  "targetLayout": {
+    "sidebarWidth": 210,
+    "topBarHeight": 48,
+    "contentPadding": 28,
+    "welcomeHeight": 88,
+    "composerHeight": 430,
+    "multilineEditingHeight": 320,
+    "shortcutHeight": 64,
+    "shortcutIconTile": 34,
+    "lowerListPanelHeight": 205,
+    "listRowHeight": 42,
+    "radius": 10,
+    "shortcutGap": 12
+  },
+  "hierarchy": ["对话编辑", "常用快捷入口", "最近会话与能力列表"],
+  "note": "数值为生成与后续实现的布局目标，不代表生成图片的精确像素测量。"
+}
