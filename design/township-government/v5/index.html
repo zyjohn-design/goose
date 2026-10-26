@@ -22,9 +22,15 @@ footer{padding-top:18px;font-size:12px}footer a{color:var(--red);margin-right:16
 </style>
 </head>
 <body>
-<header><small>政务智办 · 第五版</small><h1>对话界面与文档管理</h1><p>多模态对话记录、文件卡片、预览抽屉，以及文档列表和卡片视图。</p></header>
+<header><small>政务智办 · 第五版</small><h1>对话界面与文档管理</h1><p>三套主题 · 多模态对话记录、文件卡片、预览抽屉，以及文档列表和卡片视图。</p></header>
 <main>
-<nav aria-label="选择页面">
+<nav aria-label="选择主题" id="themes">
+<button type="button" data-t="civic" aria-pressed="true">朱砂政务</button>
+<button type="button" data-t="navy" aria-pressed="false">深蓝政务</button>
+<button type="button" data-t="forest" aria-pressed="false">青山雅政</button>
+<a href="prototype.html" style="margin-left:auto;align-self:center;color:var(--red)">打开可点击原型 →</a>
+</nav>
+<nav aria-label="选择页面" id="pages">
 <button type="button" data-i="0" aria-pressed="true">对话 · 多模态记录</button>
 <button type="button" data-i="1" aria-pressed="false">对话 · 文件预览</button>
 <button type="button" data-i="2" aria-pressed="false">文档管理 · 列表</button>
@@ -32,20 +38,22 @@ footer{padding-top:18px;font-size:12px}footer a{color:var(--red);margin-right:16
 </nav>
 <figure><img id="img" alt=""><figcaption><strong id="title" aria-live="polite"></strong><a id="open" target="_blank" rel="noopener">查看原图 ↗</a></figcaption></figure>
 <ul id="notes"></ul>
-<footer><a href="README.md">设计说明</a><a href="../v4/index.html">首页主题样例</a><a href="../v3/index.html">卡片交互原型</a></footer>
+<footer><a href="prototype.html">可点击原型</a><a href="README.md">设计说明</a><a href="../v4/index.html">首页主题样例</a><a href="../v3/index.html">卡片交互原型</a></footer>
 </main>
 <script>
 const pages=[
 {f:'01-chat-multimodal-light.png',t:'对话 · 多模态记录',n:['文本、富文本回答、图片、语音、表格在同一时间线中排列','PDF / Word / Excel 文件卡片含类型图标、大小、预览与下载','档案管理 MCP 工具调用折叠展示结果数与状态','右侧上下文栏汇总本次引用、关联档案和待办']},
 {f:'02-chat-file-preview-light.png',t:'对话 · 文件预览',n:['点击文件卡片在右侧打开预览抽屉，对话保持可见','抽屉含预览、批注、版本、信息四个标签','附件样式：图片组、PDF 页、表格缩略、外部链接卡、语音','可直接跳转到文档管理中的同一文件']},
 {f:'03-documents-list-light.png',t:'文档管理 · 列表',n:['目录树区分公文草稿、政策文件、会议纪要、档案材料、会话生成','按类型、部门、密级、时间筛选；来源标注对话生成 / 上传 / 档案 MCP','状态标签：草稿、审核中、已归档','右侧详情含文件编号、密级、关联会话与版本记录，可发起审核或归档']},
-{f:'04-documents-grid-dark.png',t:'文档管理 · 卡片 Dark',n:['卡片视图以大缩略图展示文件内容','悬停出现预览、下载、更多操作','顶部拖拽上传条，右下角显示上传进度','Dark 主题沿用朱砂红强调色与暖灰面板']}
+{f:'04-documents-grid-dark.png',t:'文档管理 · 卡片 Dark',n:['卡片视图以大缩略图展示文件内容','悬停出现预览、下载、更多操作','顶部拖拽上传条，右下角显示上传进度','Dark 主题保留各自强调色：朱砂红、钢蓝、玉青']}
 ];
 const img=document.getElementById('img'),title=document.getElementById('title'),openLink=document.getElementById('open'),notes=document.getElementById('notes');
-function show(i){const p=pages[i];img.src='images/'+p.f;img.alt=p.t+' 设计图';title.textContent=p.t;openLink.href='images/'+p.f;
+let theme='civic',cur=0;
+function show(i){cur=i;const p=pages[i];img.src='images/'+theme+'/'+p.f;img.alt=p.t+' 设计图';title.textContent=p.t;openLink.href='images/'+theme+'/'+p.f;
 notes.innerHTML=p.n.map(x=>'<li>'+x+'</li>').join('');
-document.querySelectorAll('nav button').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.i===i)));}
-document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>show(+b.dataset.i)));show(0);
+document.querySelectorAll('#pages button').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.i===i)));}
+document.querySelectorAll('#pages button').forEach(b=>b.addEventListener('click',()=>show(+b.dataset.i)));
+document.querySelectorAll('#themes button').forEach(b=>b.addEventListener('click',()=>{theme=b.dataset.t;document.querySelectorAll('#themes button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));show(cur);}));show(0);
 </script>
 </body>
 </html>

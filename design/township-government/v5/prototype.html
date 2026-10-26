@@ -1,0 +1,393 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="civic" data-mode="light">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>政务智办 · 对话与预览交互原型</title>
+<style>
+:root{--r:10px;--font:"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif;--serif:"Songti SC","STSong","Noto Serif CJK SC",serif}
+[data-mode=light]{color-scheme:light}[data-mode=dark]{color-scheme:dark}
+[data-theme=civic][data-mode=light]{--bg:#f7f5f1;--panel:#fff;--side:#fbfaf7;--ink:#252b32;--muted:#69707a;--line:#e6e2da;--acc:#a52830;--acc-soft:#f6eaeb;--gold:#b08a3e;--me:#a52830;--me-ink:#fff}
+[data-theme=civic][data-mode=dark]{--bg:#15171b;--panel:#1e2126;--side:#1a1c20;--ink:#ece8e1;--muted:#a1a4aa;--line:#2f3238;--acc:#d0585d;--acc-soft:#3a2427;--gold:#c9a55a;--me:#8f2b30;--me-ink:#fff}
+[data-theme=navy][data-mode=light]{--bg:#f3f5f8;--panel:#fff;--side:#1f3a5f;--side-ink:#e8eef6;--ink:#1f2a37;--muted:#647083;--line:#dfe4eb;--acc:#1f3a5f;--acc-soft:#e7edf5;--gold:#b08a3e;--me:#1f3a5f;--me-ink:#fff}
+[data-theme=navy][data-mode=dark]{--bg:#0f1724;--panel:#172233;--side:#0c1320;--side-ink:#dbe4f0;--ink:#e6ecf4;--muted:#93a1b5;--line:#253247;--acc:#5b8dd6;--acc-soft:#1c2c45;--gold:#c9a55a;--me:#2a4a78;--me-ink:#fff}
+[data-theme=forest][data-mode=light]{--bg:#f4f3ec;--panel:#fff;--side:#f8f7f1;--ink:#24302b;--muted:#68736d;--line:#e2e1d6;--acc:#2f5d50;--acc-soft:#e6efe9;--gold:#a88a55;--me:#2f5d50;--me-ink:#fff}
+[data-theme=forest][data-mode=dark]{--bg:#121a17;--panel:#1a2420;--side:#101714;--ink:#e5ebe6;--muted:#9aa8a0;--line:#26332e;--acc:#5fa58c;--acc-soft:#1f3329;--gold:#c2a36b;--me:#2f5d50;--me-ink:#fff}
+*{box-sizing:border-box}html,body{height:100%}
+body{margin:0;font:14px/1.65 var(--font);color:var(--ink);background:var(--bg);display:grid;grid-template-columns:232px 1fr;overflow:hidden;transition:background .3s,color .3s}
+button{font:inherit;color:inherit;cursor:pointer;background:none;border:0}
+:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex:none}
+/* sidebar */
+body>aside{background:var(--side);color:var(--side-ink,var(--ink));border-right:1px solid var(--line);display:flex;flex-direction:column;padding:18px 12px}
+.brand{display:flex;gap:10px;align-items:center;padding:0 8px 18px;border-bottom:1px solid color-mix(in srgb,var(--line) 70%,transparent);margin-bottom:12px}
+.brand .logo{width:38px;height:38px;border-radius:9px;background:var(--acc);display:grid;place-items:center;color:#fff}
+.brand b{font-size:17px;letter-spacing:2px;display:block}.brand small{font-size:11px;opacity:.7}
+aside nav button{display:flex;gap:12px;align-items:center;width:100%;padding:9px 12px;border-radius:8px;margin-bottom:2px;opacity:.86;text-align:left}
+aside nav button:hover{background:color-mix(in srgb,var(--acc) 10%,transparent);opacity:1}
+aside nav button.on{background:var(--acc);color:#fff;opacity:1}
+[data-theme=navy] aside nav button.on{background:rgba(255,255,255,.14);box-shadow:inset 3px 0 var(--gold)}
+.switch{margin-top:auto;padding:10px 8px;display:flex;flex-direction:column;gap:6px;font-size:12px}.switch span{opacity:.65}.switch .seg{border-color:color-mix(in srgb,var(--side-ink,var(--ink)) 25%,transparent)}.switch .seg button{flex:1;white-space:nowrap}.switch .seg button[aria-pressed=true]{background:var(--gold);color:#fff}
+.me{display:flex;gap:10px;align-items:center;padding:12px 8px 0;border-top:1px solid color-mix(in srgb,var(--line) 70%,transparent)}
+.avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--acc));color:#fff;display:grid;place-items:center;font-weight:600;flex:none}
+.me small{display:block;opacity:.65;font-size:12px}
+/* main */
+.app{display:grid;grid-template-columns:minmax(0,1fr) auto auto;min-width:0;height:100vh}
+.chat{display:flex;flex-direction:column;min-width:0;height:100vh}
+.top{display:flex;align-items:center;gap:12px;padding:12px 24px;border-bottom:1px solid var(--line);background:var(--panel)}
+.top h1{min-width:0;font-size:16px;margin:0;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chip{font-size:12px;padding:2px 9px;border-radius:99px;background:var(--acc-soft);color:var(--acc);white-space:nowrap}
+.top .sp{flex:1}
+.seg{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{white-space:nowrap;padding:5px 10px;font-size:12px}.seg button[aria-pressed=true]{background:var(--acc);color:#fff}
+.ghost{display:inline-flex;gap:6px;align-items:center;padding:6px 10px;border:1px solid var(--line);border-radius:8px;font-size:13px}
+.ghost:hover{border-color:var(--acc);color:var(--acc)}
+.log{flex:1;overflow:auto;padding:22px 24px 10px;scroll-behavior:smooth}
+.inner{max-width:900px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+.day{align-self:center;font-size:12px;color:var(--muted)}
+.msg{display:flex;gap:10px;animation:rise .45s both}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}}
+.msg.user{flex-direction:row-reverse}
+.msg .who{width:30px;height:30px;font-size:12px}
+.bot-av{width:30px;height:30px;border-radius:8px;background:var(--acc-soft);color:var(--acc);display:grid;place-items:center;flex:none}
+.body{max-width:78%;display:flex;flex-direction:column;gap:8px;min-width:0}
+.user .body{align-items:flex-end}
+.bubble{background:var(--me);color:var(--me-ink);padding:9px 14px;border-radius:12px 4px 12px 12px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px}
+.answer h3{margin:0 0 6px;font-size:15px}.answer ol{margin:6px 0;padding-left:20px}
+.meta{font-size:12px;color:var(--muted)}
+.cites{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.cites button{font-size:12px;padding:2px 8px;border-radius:6px;border:1px solid var(--line);color:var(--muted)}
+.cites button:hover{color:var(--acc);border-color:var(--acc)}
+/* attachments */
+.file{display:flex;align-items:center;gap:12px;width:340px;max-width:100%;padding:10px 12px;background:var(--panel);border:1px solid var(--line);border-radius:var(--r);text-align:left;transition:border-color .2s,box-shadow .2s}
+.file:hover,.file.sel{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-soft)}
+.ft{width:36px;height:42px;border-radius:5px;display:grid;place-items:center;color:#fff;font-size:11px;font-weight:700;flex:none;position:relative}
+.ft.docx{background:#2b5797}.ft.pdf{background:#c4302b}.ft.xlsx{background:#1e7145}.ft.img{background:#6b7a99}
+.file .n{flex:1;min-width:0}.file .n b{display:block;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.acts{display:flex;gap:2px}.acts span{padding:4px;border-radius:6px;color:var(--muted)}.acts span:hover{background:var(--acc-soft);color:var(--acc)}
+.imgs{display:flex;gap:8px}
+.imgs button{width:150px;height:100px;border-radius:9px;overflow:hidden;border:1px solid var(--line);padding:0}
+.ph{width:100%;height:100%;display:block}
+.voice{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:12px 4px 12px 12px;background:var(--me);color:var(--me-ink);min-width:240px}
+.voice .play{width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.2);display:grid;place-items:center}
+.wave{display:flex;gap:2px;align-items:center;flex:1;height:22px}.wave i{width:3px;border-radius:2px;background:currentColor;opacity:.75}
+.voice.playing .wave i{animation:w .8s infinite alternate}
+@keyframes w{to{transform:scaleY(.35)}}
+.trans{font-size:12px;text-decoration:underline;opacity:.85}
+.transcript{font-size:13px;color:var(--muted);max-width:420px;text-align:right}
+.tool{padding:0;overflow:hidden}
+.tool>button{display:flex;align-items:center;gap:10px;width:100%;padding:10px 14px;text-align:left}
+.ok{color:#2e8b57}
+.tool .detail{border-top:1px solid var(--line);padding:10px 14px;font-size:13px;display:none}
+.tool.open .detail{display:block}.tool.open .chev{transform:rotate(180deg)}
+.chev{transition:transform .2s}
+table{border-collapse:collapse;width:100%;font-size:13px}th,td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left}th{color:var(--muted);font-weight:500}
+.link{display:flex;gap:12px;width:420px;max-width:100%;padding:12px;border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:var(--r);background:var(--panel);text-align:left}
+.link:hover{border-color:var(--acc);border-left-color:var(--gold)}
+.link .fav{width:34px;height:34px;border-radius:8px;background:var(--acc-soft);color:var(--acc);display:grid;place-items:center}
+.link b{display:block}.link p{margin:2px 0 0;font-size:12px;color:var(--muted)}
+.xls{display:flex;gap:12px;align-items:center;width:340px;padding:10px;border:1px solid var(--line);border-radius:var(--r);background:var(--panel);text-align:left}
+.xls:hover{border-color:var(--acc)}
+.mini{display:grid;grid-template-columns:repeat(4,16px);gap:2px}.mini i{height:9px;background:color-mix(in srgb,#1e7145 30%,transparent);border-radius:1px}.mini i:nth-child(-n+4){background:#1e7145}
+/* composer */
+.composer{padding:10px 24px 18px}
+.box{max-width:900px;margin:0 auto;background:var(--panel);border:1px solid var(--line);border-radius:14px;box-shadow:0 6px 24px rgba(0,0,0,.05);transition:border-color .2s}
+.box:focus-within{border-color:var(--acc)}
+.pending{display:flex;gap:6px;flex-wrap:wrap;padding:10px 14px 0}
+.pending span{display:inline-flex;gap:6px;align-items:center;font-size:12px;padding:3px 8px;border-radius:6px;background:var(--acc-soft);color:var(--acc)}
+.pending span button{line-height:1}
+textarea:focus-visible{outline:0}
+textarea{display:block;width:100%;min-height:110px;max-height:240px;resize:vertical;border:0;background:transparent;color:var(--ink);font:15px/1.7 var(--font);padding:12px 16px;outline:0}
+.bar{display:flex;align-items:center;gap:4px;padding:6px 10px 10px}
+.bar .ic{padding:7px;border-radius:8px;color:var(--muted)}.bar .ic:hover{background:var(--acc-soft);color:var(--acc)}
+.bar .sp{flex:1}
+.send{display:inline-flex;gap:6px;align-items:center;background:var(--acc);color:#fff;padding:7px 16px;border-radius:9px}
+.send:disabled{opacity:.45;cursor:not-allowed}
+/* context + drawer */
+.ctx{width:280px;border-left:1px solid var(--line);background:var(--panel);overflow:auto;padding:16px}
+.ctx h4{margin:4px 0 8px;font-size:13px;color:var(--muted);font-weight:500}
+.ctx .row{display:flex;gap:8px;align-items:center;width:100%;padding:7px 8px;border-radius:8px;text-align:left;font-size:13px}
+.ctx .row:hover{background:var(--acc-soft)}
+.ctx .ft{width:24px;height:28px;font-size:8px}
+.ctx section{margin-bottom:18px}
+.todo{display:flex;gap:8px;align-items:flex-start;font-size:13px;padding:5px 0}
+.drawer{width:0;overflow:hidden;border-left:1px solid var(--line);background:var(--panel);transition:width .35s ease;display:flex;flex-direction:column}
+.app.preview .drawer{width:min(48vw,640px)}
+.app.preview .ctx{display:none}
+.app.preview textarea{min-height:60px}.app.preview .composer{padding:8px 16px 12px}.app.preview .log{padding:16px}
+.dh{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line);min-width:420px}
+.dh b{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tabs{display:flex;gap:4px;padding:0 16px;border-bottom:1px solid var(--line);min-width:420px}
+.tabs button{padding:9px 10px;color:var(--muted);border-bottom:2px solid transparent}
+.tabs button[aria-selected=true]{color:var(--acc);border-color:var(--acc)}
+.dbody{flex:1;overflow:auto;background:color-mix(in srgb,var(--bg) 70%,var(--panel));min-width:420px}
+.dfoot{display:flex;gap:10px;align-items:center;justify-content:center;padding:8px;border-top:1px solid var(--line);font-size:12px;color:var(--muted);min-width:420px}
+.dfoot button{padding:3px 8px;border:1px solid var(--line);border-radius:6px}
+.viewer{display:flex;gap:14px;padding:18px}
+.thumbs{display:flex;flex-direction:column;gap:8px}
+.thumbs button{width:56px;height:78px;background:#fff;border:1px solid var(--line);border-radius:3px;padding:6px 5px;display:flex;flex-direction:column;gap:3px}
+.thumbs button.on{outline:2px solid var(--acc)}
+.thumbs i{display:block;height:2px;background:#d5d5d5}.thumbs i:first-child{background:#c4302b;width:70%;margin:2px auto 4px}
+.page{flex:1;background:#fffefb;color:#1d1d1d;box-shadow:0 2px 18px rgba(0,0,0,.12);padding:48px 52px;font:15px/2 var(--serif);transform-origin:top center;transition:transform .2s;position:relative;min-height:760px}
+.page h2{text-align:center;color:#c4302b;font-size:22px;margin:0 0 6px;letter-spacing:1px}
+.page .no{text-align:center;font:13px var(--font);color:#555}
+.page hr{border:0;border-top:2px solid #c4302b;margin:10px 0 20px}
+.page p{text-indent:2em;margin:0 0 6px}
+.page mark{background:#fdf0c2;cursor:pointer}
+.note{position:absolute;right:-8px;transform:translateX(100%);width:0}
+.pdfpage h2{color:#1d1d1d}.pdfpage hr{border-color:#1d1d1d}
+.sheet{margin:18px;background:var(--panel);border:1px solid var(--line);border-radius:8px;overflow:auto}
+.sheet td,.sheet th{border:1px solid var(--line);white-space:nowrap}.sheet th{background:color-mix(in srgb,#1e7145 12%,var(--panel))}
+.st{font-size:12px;padding:1px 6px;border-radius:5px}.st.d{background:#e6f4ea;color:#1e7145}.st.p{background:#fff3e0;color:#b26a00}
+.panel-list{padding:16px;display:flex;flex-direction:column;gap:10px}
+.cmt{background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:10px 12px}
+.cmt.hl{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-soft)}
+.cmt q{display:block;font-size:12px;color:var(--muted);border-left:2px solid var(--gold);padding-left:8px;margin:4px 0}
+.ver{display:flex;gap:12px}.ver .dot{width:10px;height:10px;border-radius:50%;background:var(--line);margin-top:6px;flex:none}.ver.cur .dot{background:var(--acc)}
+dl{display:grid;grid-template-columns:90px 1fr;gap:8px 12px;margin:0;font-size:13px}dt{color:var(--muted)}dd{margin:0}
+.lightbox{position:fixed;inset:0;background:rgba(10,12,16,.82);display:none;place-items:center;z-index:20}
+.lightbox.on{display:grid;animation:fade .2s}
+@keyframes fade{from{opacity:0}}
+.lightbox figure{margin:0;width:min(900px,86vw)}
+.lightbox .ph{border-radius:10px;aspect-ratio:3/2;height:auto}
+.lightbox figcaption{display:flex;justify-content:space-between;color:#eee;padding:10px 2px;font-size:13px}
+.lb-nav{position:absolute;top:50%;color:#fff;background:rgba(255,255,255,.12);border-radius:50%;width:44px;height:44px;display:grid;place-items:center}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;place-items:center;z-index:30}
+.modal.on{display:grid}
+.modal .card{width:400px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.modal .row2{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--panel);padding:8px 16px;border-radius:8px;opacity:0;transition:.25s;pointer-events:none;z-index:40}
+.toast.on{opacity:1;transform:translateX(-50%)}
+.typing i{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--muted);margin:0 2px;animation:b 1s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes b{50%{transform:translateY(-4px);opacity:.4}}
+@media(max-width:1200px){.ctx{display:none}}
+@media(max-width:860px){body{grid-template-columns:1fr}aside{display:none}.app.preview .drawer{position:fixed;inset:0;width:100%;z-index:10}.dh,.tabs,.dbody,.dfoot{min-width:0}.body{max-width:92%}.top .seg{display:none}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+<symbol id="i-home" viewBox="0 0 24 24"><path d="M3 10l9-7 9 7v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></symbol>
+<symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></symbol>
+<symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 6a1 1 0 0 1 1-1h5l2 2h9a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/></symbol>
+<symbol id="i-book" viewBox="0 0 24 24"><path d="M4 4h10a4 4 0 0 1 4 4v12H8a4 4 0 0 1-4-4z"/><path d="M8 8h6M8 12h6"/></symbol>
+<symbol id="i-star" viewBox="0 0 24 24"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></symbol>
+<symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></symbol>
+<symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+<symbol id="i-plug" viewBox="0 0 24 24"><path d="M9 7V3M15 7V3M6 7h12v4a6 6 0 0 1-12 0zM12 17v4"/></symbol>
+<symbol id="i-palette" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18c1 0 1.5-.8 1.5-1.5 0-1.2-1-1.5-1-2.5s.8-1.5 2-1.5H17a4 4 0 0 0 4-4c0-4.7-4-8.5-9-8.5z"/><circle cx="7.5" cy="11" r="1"/><circle cx="11" cy="7" r="1"/><circle cx="16" cy="8.5" r="1"/></symbol>
+<symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></symbol>
+<symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+<symbol id="i-down" viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></symbol>
+<symbol id="i-clip" viewBox="0 0 24 24"><path d="M21 11.5l-8.6 8.6a5 5 0 0 1-7-7l8.6-8.6a3.3 3.3 0 0 1 4.7 4.7l-8.6 8.6a1.7 1.7 0 0 1-2.4-2.4l8-8"/></symbol>
+<symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9.5" r="1.5"/><path d="M21 16l-5-5L5 20"/></symbol>
+<symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></symbol>
+<symbol id="i-send" viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4z"/></symbol>
+<symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+<symbol id="i-chev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></symbol>
+<symbol id="i-db" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></symbol>
+<symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></symbol>
+<symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z" fill="currentColor"/></symbol>
+<symbol id="i-pause" viewBox="0 0 24 24"><path d="M8 4v16M16 4v16"/></symbol>
+<symbol id="i-ext" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></symbol>
+<symbol id="i-share" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></symbol>
+<symbol id="i-left" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></symbol>
+<symbol id="i-right" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+<symbol id="i-gov" viewBox="0 0 24 24"><path d="M3 21h18M5 21V10M19 21V10M9 21v-7M15 21v-7M2 10l10-6 10 6z"/></symbol>
+</svg>
+
+<aside>
+  <div class="brand"><div class="logo"><svg><use href="#i-gov"/></svg></div><div><b>政务智办</b><small>镇政府智能工作台</small></div></div>
+  <nav aria-label="主导航">
+    <button><svg><use href="#i-home"/></svg>工作台</button>
+    <button class="on" aria-current="page"><svg><use href="#i-chat"/></svg>对话</button>
+    <button><svg><use href="#i-folder"/></svg>文档管理</button>
+    <button><svg><use href="#i-book"/></svg>配方中心</button>
+    <button><svg><use href="#i-star"/></svg>技能中心</button>
+    <button><svg><use href="#i-grid"/></svg>应用中心</button>
+    <button><svg><use href="#i-clock"/></svg>任务调度</button>
+    <button><svg><use href="#i-plug"/></svg>扩展管理</button>
+    <button><svg><use href="#i-palette"/></svg>主题中心</button>
+    <button><svg><use href="#i-gear"/></svg>设置</button>
+  </nav>
+  <div class="switch"><span>原型主题</span>
+    <div class="seg" aria-label="主题"><button data-theme="civic" aria-pressed="true">朱砂</button><button data-theme="navy" aria-pressed="false">深蓝</button><button data-theme="forest" aria-pressed="false">青山</button></div>
+    <div class="seg" aria-label="明暗"><button data-mode="light" aria-pressed="true">Light</button><button data-mode="dark" aria-pressed="false">Dark</button></div></div>
+  <div class="me"><div class="avatar">张</div><div>张主任<small>党政办公室</small></div></div>
+</aside>
+
+<div class="app" id="app">
+  <section class="chat">
+    <div class="top">
+      <h1>人居环境整治工作通知起草</h1><span class="chip">政务大模型</span>
+      <span class="sp"></span>
+      <button class="ghost" data-toast="已生成分享链接（原型）"><svg><use href="#i-share"/></svg>分享</button>
+    </div>
+
+    <div class="log" id="log"><div class="inner" id="inner">
+      <div class="day">今天 09:12</div>
+
+      <div class="msg user"><div class="avatar who">张</div><div class="body">
+        <div class="bubble">请参考上传的整治方案和检查台账，起草一份面向各村的人居环境整治提升工作通知。</div>
+        <button class="file" data-open="plan"><span class="ft pdf">PDF</span><span class="n"><b>2026年人居环境整治方案.pdf</b><span class="meta">2.4 MB · 本地上传</span></span><span class="acts"><span title="预览"><svg><use href="#i-eye"/></svg></span><span title="下载" data-dl><svg><use href="#i-down"/></svg></span></span></button>
+        <button class="file" data-open="sheet"><span class="ft xlsx">XLSX</span><span class="n"><b>村居检查台账.xlsx</b><span class="meta">186 KB · 本地上传</span></span><span class="acts"><span title="预览"><svg><use href="#i-eye"/></svg></span><span title="下载" data-dl><svg><use href="#i-down"/></svg></span></span></button>
+      </div></div>
+
+      <div class="msg user"><div class="avatar who">张</div><div class="body">
+        <div class="imgs"><button data-lb="0" aria-label="查看现场照片 1"></button><button data-lb="1" aria-label="查看现场照片 2"></button></div>
+        <div class="bubble">这是上周东风村的现场照片，可作为通知附件。</div>
+      </div></div>
+
+      <div class="msg user"><div class="avatar who">张</div><div class="body">
+        <div class="voice" id="voice"><button class="play" id="play" aria-label="播放语音"><svg><use href="#i-play"/></svg></button><span class="wave" id="wave"></span><span>00:42</span><button class="trans" id="transBtn">转文字</button></div>
+        <div class="transcript" id="transcript" hidden>“通知里要写清楚时间节点，6月底前完成自查，7月15号前镇里组织验收，责任落实到村书记。”</div>
+      </div></div>
+
+      <div class="msg"><div class="bot-av"><svg><use href="#i-gov"/></svg></div><div class="body">
+        <div class="card tool" id="tool"><button aria-expanded="false"><svg><use href="#i-db"/></svg><span style="flex:1"><b style="font-weight:500">档案管理 MCP · 查询档案</b> <span class="meta">返回 3 条结果 · 0.8 秒</span></span><svg class="ok"><use href="#i-check"/></svg><svg class="chev"><use href="#i-chev"/></svg></button>
+          <div class="detail"><table><tr><th>档号</th><th>题名</th><th>年度</th></tr><tr><td>WS-2025-014</td><td>2025年人居环境整治工作总结</td><td>2025</td></tr><tr><td>WS-2025-022</td><td>村庄清洁行动验收办法</td><td>2025</td></tr><tr><td>WS-2024-031</td><td>农村厕所改造实施细则</td><td>2024</td></tr></table></div></div>
+        <div class="card answer">
+          <h3>已完成通知初稿</h3>
+          根据整治方案、检查台账和您的语音要求，初稿按以下结构组织：
+          <ol><li>工作目标：以村庄清洁、垃圾治理、厕所改造为重点 <sup>[1]</sup></li><li>时间安排：6月30日前自查，7月15日前镇级验收</li><li>责任分工：村党组织书记为第一责任人 <sup>[2]</sup></li><li>保障措施：每周通报台账进度 <sup>[3]</sup></li></ol>
+          台账显示 7 个村中 2 个已完成，下表为进度摘要：
+          <table style="margin-top:8px"><tr><th>村名</th><th>重点项目</th><th>完成率</th></tr><tr><td>东风村</td><td>道路硬化</td><td>76%</td></tr><tr><td>和平村</td><td>农田水利</td><td>100%</td></tr><tr><td>新民村</td><td>文化广场</td><td>48%</td></tr></table>
+          <div class="cites"><button data-open="plan">[1] 整治方案 第2页</button><button data-open="sheet">[2] 检查台账</button><button data-open="notice">[3] 工作通知初稿 第1页</button></div>
+        </div>
+        <button class="file" data-open="notice"><span class="ft docx">DOCX</span><span class="n"><b>工作通知初稿.docx</b><span class="meta">48 KB · 对话生成 · V3</span></span><span class="acts"><span title="预览"><svg><use href="#i-eye"/></svg></span><span title="下载" data-dl><svg><use href="#i-down"/></svg></span></span></button>
+        <button class="link" id="extLink"><span class="fav"><svg><use href="#i-globe"/></svg></span><span><b>农村人居环境整治提升五年行动方案</b><p>www.gov.cn · 政策文件 · 中共中央办公厅 国务院办公厅印发</p></span><svg style="margin-left:auto;color:var(--muted)"><use href="#i-ext"/></svg></button>
+      </div></div>
+    </div></div>
+
+    <div class="composer"><div class="box">
+      <div class="pending" id="pending"></div>
+      <label for="ta" class="sr" style="position:absolute;left:-9999px">输入消息</label>
+      <textarea id="ta" placeholder="输入工作任务，Enter 发送，Shift+Enter 换行。可添加附件、图片或语音。"></textarea>
+      <div class="bar">
+        <button class="ic" id="addFile" title="添加附件"><svg><use href="#i-clip"/></svg></button>
+        <button class="ic" id="addImg" title="添加图片"><svg><use href="#i-image"/></svg></button>
+        <button class="ic" data-toast="语音录制需在客户端授权麦克风（原型）" title="语音"><svg><use href="#i-mic"/></svg></button>
+        <span class="chip" style="margin-left:6px">工作目录 · 党政办/2026</span>
+        <span class="sp"></span>
+        <button class="send" id="send" disabled><svg><use href="#i-send"/></svg>发送</button>
+      </div>
+    </div></div>
+  </section>
+
+  <aside class="ctx" aria-label="本次上下文">
+    <section><h4>本次引用</h4>
+      <button class="row" data-open="plan"><span class="ft pdf">PDF</span>2026年人居环境整治方案</button>
+      <button class="row" data-open="sheet"><span class="ft xlsx">XLS</span>村居检查台账</button>
+      <button class="row" data-open="notice"><span class="ft docx">DOC</span>工作通知初稿</button>
+    </section>
+    <section><h4>关联档案</h4>
+      <div class="todo"><svg><use href="#i-db"/></svg>WS-2025-014 整治工作总结</div>
+      <div class="todo"><svg><use href="#i-db"/></svg>WS-2025-022 清洁行动验收办法</div>
+    </section>
+    <section><h4>待办</h4>
+      <label class="todo"><input type="checkbox"> 送分管领导审阅初稿</label>
+      <label class="todo"><input type="checkbox"> 发起档案审核 Skill</label>
+      <label class="todo"><input type="checkbox" checked> 汇总台账进度</label>
+    </section>
+  </aside>
+
+  <aside class="drawer" id="drawer" aria-label="文件预览">
+    <div class="dh"><span class="ft docx" id="dIcon">DOCX</span><b id="dName">工作通知初稿.docx</b><span class="chip" id="dVer">V3</span>
+      <button class="ghost" data-toast="已开始下载（原型）"><svg><use href="#i-down"/></svg>下载</button>
+      <button class="ghost" data-toast="将在文档管理中定位该文件（原型）"><svg><use href="#i-folder"/></svg>在文档管理中打开</button>
+      <button class="ghost" id="close" aria-label="关闭预览"><svg><use href="#i-x"/></svg></button></div>
+    <div class="tabs" role="tablist"><button role="tab" data-tab="preview" aria-selected="true">预览</button><button role="tab" data-tab="comments" aria-selected="false">批注 <span class="chip" id="cCount">2</span></button><button role="tab" data-tab="versions" aria-selected="false">版本</button><button role="tab" data-tab="info" aria-selected="false">信息</button></div>
+    <div class="dbody" id="dbody"></div>
+    <div class="dfoot" id="dfoot"><button id="zout" aria-label="缩小">−</button><span id="zv">100%</span><button id="zin" aria-label="放大">＋</button><span>|</span><span id="pg">第 1 / 3 页</span></div>
+  </aside>
+</div>
+
+<div class="lightbox" id="lb" role="dialog" aria-label="图片预览"><button class="lb-nav" style="left:4vw" id="lbPrev" aria-label="上一张"><svg><use href="#i-left"/></svg></button>
+  <figure><div id="lbImg"></div><figcaption><span id="lbCap"></span><span>按 Esc 关闭</span></figcaption></figure>
+  <button class="lb-nav" style="right:4vw" id="lbNext" aria-label="下一张"><svg><use href="#i-right"/></svg></button></div>
+
+<div class="modal" id="modal" role="dialog" aria-label="离开应用提示"><div class="card"><b>即将打开外部网站</b><p class="meta" style="margin:6px 0 0">www.gov.cn 将在系统浏览器中打开，请确认网址可信。</p><div class="row2"><button class="ghost" id="mNo">取消</button><button class="send" id="mYes">继续打开</button></div></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const root=document.documentElement,app=$('#app');
+function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('on'),1800)}
+$$('[data-toast]').forEach(b=>b.addEventListener('click',()=>toast(b.dataset.toast)));
+$$('.seg [data-theme]').forEach(b=>b.addEventListener('click',()=>{root.dataset.theme=b.dataset.theme;$$('.seg [data-theme]').forEach(x=>x.setAttribute('aria-pressed',x===b))}));
+$$('.seg [data-mode]').forEach(b=>b.addEventListener('click',()=>{root.dataset.mode=b.dataset.mode;$$('.seg [data-mode]').forEach(x=>x.setAttribute('aria-pressed',x===b))}));
+
+/* scenic placeholders drawn as SVG so the prototype stays offline */
+const scenes=[['#a8c6dc','#6e9a6a','#c9b28e','东风村 · 主街清理后'],['#c7d8e2','#5f8a5b','#b9a07c','东风村 · 垃圾分类点']];
+function scene(i){const[s,g,r]=scenes[i];return `<svg class="ph" viewBox="0 0 300 200" preserveAspectRatio="xMidYMid slice"><rect width="300" height="200" fill="${s}"/><path d="M0 110 L60 70 L120 100 L190 55 L300 105 V200 H0z" fill="${g}" opacity=".7"/><path d="M0 140 Q150 120 300 150 V200 H0z" fill="${g}"/><path d="M120 200 L150 130 L165 130 L200 200z" fill="${r}"/><rect x="40" y="105" width="46" height="34" fill="#f4f1ea"/><path d="M36 107 L63 88 L90 107z" fill="#5b5f66"/><rect x="215" y="100" width="40" height="38" fill="#f4f1ea"/><path d="M211 102 L235 84 L259 102z" fill="#5b5f66"/></svg>`}
+$$('[data-lb]').forEach(b=>{b.innerHTML=scene(+b.dataset.lb);b.addEventListener('click',()=>openLb(+b.dataset.lb))});
+let lbI=0;function openLb(i){lbI=i;$('#lbImg').innerHTML=scene(i);$('#lbCap').textContent=scenes[i][3]+`  (${i+1}/2)`;$('#lb').classList.add('on')}
+$('#lbPrev').onclick=e=>{e.stopPropagation();openLb((lbI+1)%2)};$('#lbNext').onclick=e=>{e.stopPropagation();openLb((lbI+1)%2)};
+$('#lb').onclick=e=>{if(e.target.id==='lb')$('#lb').classList.remove('on')};
+
+/* voice */
+const wave=$('#wave');wave.innerHTML=Array.from({length:28},(_,i)=>`<i style="height:${6+Math.abs(Math.sin(i*1.7))*16}px;animation-delay:${i*.04}s"></i>`).join('');
+$('#play').onclick=()=>{const v=$('#voice'),on=v.classList.toggle('playing');$('#play').innerHTML=`<svg><use href="#i-${on?'pause':'play'}"/></svg>`;$('#play').setAttribute('aria-label',on?'暂停':'播放语音')};
+$('#transBtn').onclick=()=>{const t=$('#transcript');t.hidden=!t.hidden;$('#transBtn').textContent=t.hidden?'转文字':'收起'};
+$('#tool>button').onclick=()=>{const t=$('#tool'),o=t.classList.toggle('open');t.firstElementChild.setAttribute('aria-expanded',o)};
+$('#extLink').onclick=()=>$('#modal').classList.add('on');$('#mNo').onclick=()=>$('#modal').classList.remove('on');
+$('#mYes').onclick=()=>{$('#modal').classList.remove('on');toast('原型中不实际打开外部链接')};
+
+/* documents */
+const notice=`<h2>关于开展人居环境整治提升工作的通知</h2><div class="no">X镇政办发〔2026〕18号</div><hr>
+<p style="text-indent:0">各村（社区）党组织、村（居）委会，镇直各单位：</p>
+<p>为深入推进农村人居环境整治提升，建设<mark data-c="0">美丽宜居乡村</mark>，经镇党委、政府研究，决定在全镇范围内开展人居环境整治提升工作。现将有关事项通知如下：</p>
+<p><b>一、工作目标。</b>以村庄清洁、垃圾治理、厕所改造为重点，到2026年底实现村庄环境干净整洁有序。</p>
+<p><b>二、时间安排。</b>各村于<mark data-c="1">6月30日前完成自查</mark>，7月15日前由镇级组织验收。</p>
+<p><b>三、责任分工。</b>村党组织书记为第一责任人，镇包村干部负责督导，镇农业农村办负责统筹协调。</p>
+<p><b>四、保障措施。</b>建立周通报制度，以检查台账为依据，每周通报进度。</p>`;
+const plan=`<h2>2026年人居环境整治方案</h2><div class="no">X镇人民政府 · 2026年3月</div><hr><p><b>一、总体要求。</b>坚持因地制宜、分类推进，统筹村庄规划、基础设施和公共服务。</p><p><b>二、重点任务。</b>（一）村庄清洁行动；（二）生活垃圾治理；（三）厕所革命；（四）生活污水治理；（五）村容村貌提升。</p><p><b>三、组织保障。</b>成立镇人居环境整治工作领导小组，镇长任组长。</p>`;
+const rows=[['东风村','道路硬化','进行中',76],['和平村','农田水利','已完成',100],['新民村','文化广场','进行中',48],['红旗村','产业园项目','进行中',32],['建设村','生态治理','已完成',100],['富民村','村庄绿化','进行中',65],['长林村','太阳能路灯','进行中',80]];
+const docs={
+ notice:{name:'工作通知初稿.docx',t:'docx',ver:'V3',pages:3,kind:'page',html:notice,
+  comments:[{who:'李书记',q:'美丽宜居乡村',t:'建议与县里文件表述保持一致，改为“宜居宜业和美乡村”。',c:0},{who:'张主任',q:'6月30日前完成自查',t:'自查结果需同步上传检查台账。',c:1}],
+  versions:[['V3','对话生成 · 补充时间节点','今天 09:31','当前'],['V2','张主任 · 调整责任分工','今天 09:20',''],['V1','对话生成 · 初稿','今天 09:15','']],
+  info:[['文件编号','ZB-2026-0318'],['密级','内部'],['来源','对话生成'],['负责人','张主任'],['关联会话','人居环境整治工作通知起草'],['关联档案','WS-2025-014、WS-2025-022'],['大小','48 KB']]},
+ plan:{name:'2026年人居环境整治方案.pdf',t:'pdf',ver:'V1',pages:12,kind:'page',pdf:1,html:plan,comments:[],versions:[['V1','本地上传','3月18日','当前']],info:[['密级','内部'],['来源','本地上传'],['页数','12'],['大小','2.4 MB']]},
+ sheet:{name:'村居检查台账.xlsx',t:'xlsx',ver:'V5',pages:1,kind:'sheet',comments:[],versions:[['V5','王强 · 更新东风村进度','昨天 17:40','当前'],['V4','陈丽 · 新增长林村','6月14日','']],info:[['工作表','进度统计、问题清单'],['来源','本地上传'],['大小','186 KB']]}
+};
+let cur=null,zoom=100,tab='preview',hl=null;
+function openDoc(id){cur=docs[id];zoom=100;tab='preview';hl=null;app.classList.add('preview');
+ $$('.file').forEach(f=>f.classList.toggle('sel',f.dataset.open===id));
+ $('#dIcon').className='ft '+cur.t;$('#dIcon').textContent=cur.t.toUpperCase();$('#dName').textContent=cur.name;$('#dVer').textContent=cur.ver;$('#cCount').textContent=cur.comments.length;render()}
+function render(){
+ $$('.tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===tab));
+ $('#dfoot').style.display=tab==='preview'?'flex':'none';const B=$('#dbody');
+ if(tab==='preview'){
+  if(cur.kind==='sheet'){B.innerHTML=`<div class="sheet"><table><tr><th></th><th>村名</th><th>项目名称</th><th>进度</th><th>完成率</th></tr>${rows.map((r,i)=>`<tr><th>${i+1}</th><td>${r[0]}</td><td>${r[1]}</td><td><span class="st ${r[3]==100?'d':'p'}">${r[2]}</span></td><td>${r[3]}%</td></tr>`).join('')}</table></div>`;$('#pg').textContent='工作表 1 / 2'}
+  else{B.innerHTML=`<div class="viewer"><div class="thumbs">${Array.from({length:Math.min(cur.pages,4)},(_,i)=>`<button class="${i?'':'on'}" aria-label="第${i+1}页"><i></i><i></i><i></i><i></i><i></i><i></i></button>`).join('')}</div><article class="page ${cur.pdf?'pdfpage':''}" style="transform:scale(${zoom/100})">${cur.html}</article></div>`;
+   $('#pg').textContent=`第 1 / ${cur.pages} 页`;
+   B.querySelectorAll('mark').forEach(m=>m.onclick=()=>{hl=+m.dataset.c;tab='comments';render()});
+   B.querySelectorAll('.thumbs button').forEach((b,i)=>b.onclick=()=>{B.querySelectorAll('.thumbs button').forEach(x=>x.classList.toggle('on',x===b));$('#pg').textContent=`第 ${i+1} / ${cur.pages} 页`})}
+  $('#zv').textContent=zoom+'%'}
+ if(tab==='comments')B.innerHTML=`<div class="panel-list">${cur.comments.length?cur.comments.map((c,i)=>`<div class="cmt ${hl===c.c?'hl':''}"><b>${c.who}</b> <span class="meta">今天</span><q>${c.q}</q>${c.t}</div>`).join(''):'<p class="meta">暂无批注</p>'}<textarea placeholder="添加批注…" style="min-height:70px;border:1px solid var(--line);border-radius:8px;background:var(--panel)"></textarea></div>`;
+ if(tab==='versions')B.innerHTML=`<div class="panel-list">${cur.versions.map(v=>`<div class="ver ${v[3]?'cur':''}"><span class="dot"></span><div><b>${v[0]}</b> ${v[3]?'<span class="chip">当前</span>':''}<div>${v[1]}</div><div class="meta">${v[2]}</div></div></div>`).join('')}</div>`;
+ if(tab==='info')B.innerHTML=`<div class="panel-list"><dl>${cur.info.map(r=>`<dt>${r[0]}</dt><dd>${r[1]}</dd>`).join('')}</dl></div>`;
+}
+$$('.tabs button').forEach(b=>b.onclick=()=>{tab=b.dataset.tab;render()});
+$('#zin').onclick=()=>{zoom=Math.min(150,zoom+10);render()};$('#zout').onclick=()=>{zoom=Math.max(60,zoom-10);render()};
+$('#close').onclick=()=>{app.classList.remove('preview');$$('.file').forEach(f=>f.classList.remove('sel'))};
+document.addEventListener('click',e=>{if(e.target.closest('[data-dl]')){e.stopPropagation();toast('已开始下载（原型）');return}const o=e.target.closest('[data-open]');if(o)openDoc(o.dataset.open)},true);
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){$('#lb').classList.remove('on');$('#modal').classList.remove('on')}});
+
+/* composer */
+const ta=$('#ta'),send=$('#send'),pend=[];
+function sync(){send.disabled=!ta.value.trim()&&!pend.length;$('#pending').innerHTML=pend.map((p,i)=>`<span>${p} <button aria-label="移除" data-rm="${i}">×</button></span>`).join('')}
+$('#pending').onclick=e=>{const r=e.target.dataset.rm;if(r!==undefined){pend.splice(+r,1);sync()}};
+ta.oninput=sync;$('#addFile').onclick=()=>{pend.push('镇党委会议纪要.docx');sync()};$('#addImg').onclick=()=>{pend.push('现场照片 3张');sync()};
+ta.onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();if(!send.disabled)go()}};send.onclick=go;
+function add(html){const d=document.createElement('div');d.innerHTML=html;const n=d.firstElementChild;$('#inner').appendChild(n);$('#log').scrollTop=1e9;return n}
+function go(){const txt=ta.value.trim().replace(/[<>&]/g,c=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]));
+ add(`<div class="msg user"><div class="avatar who">张</div><div class="body">${pend.map(p=>`<div class="file"><span class="ft ${/照片/.test(p)?'img':'docx'}">${/照片/.test(p)?'IMG':'DOCX'}</span><span class="n"><b>${p}</b><span class="meta">待上传 · 原型</span></span></div>`).join('')}${txt?`<div class="bubble">${txt}</div>`:''}</div></div>`);
+ ta.value='';pend.length=0;sync();
+ const t=add(`<div class="msg"><div class="bot-av"><svg><use href="#i-gov"/></svg></div><div class="body"><div class="card typing"><i></i><i></i><i></i></div></div></div>`);
+ setTimeout(()=>{t.querySelector('.body').innerHTML=`<div class="card answer">已收到。原型中不调用模型；实际版本会在这里流式返回回答，并可附带文件卡片和工具调用记录。</div><button class="file" data-open="notice"><span class="ft docx">DOCX</span><span class="n"><b>工作通知初稿.docx</b><span class="meta">48 KB · 对话生成 · V3</span></span><span class="acts"><span title="预览"><svg><use href="#i-eye"/></svg></span></span></button>`;$('#log').scrollTop=1e9},900)}
+</script>
+</body>
+</html>
