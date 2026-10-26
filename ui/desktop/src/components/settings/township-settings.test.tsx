@@ -7,6 +7,8 @@ import { ThemeProvider } from '../../contexts/ThemeContext';
 import { defaultSettings } from '../../utils/settings';
 import { ThemeCenter } from './ThemeCenter';
 import TownshipAccountMenu from './TownshipAccountMenu';
+import { themePackTemplate } from '../../theme/theme-pack-template';
+import { registerThemePacks } from '../../theme/theme-tokens';
 
 function renderSettings(children: React.ReactNode) {
   return render(
@@ -24,6 +26,10 @@ beforeEach(() => {
   vi.mocked(window.electron.getSetting).mockImplementation(async (key) => defaultSettings[key]);
   vi.mocked(window.electron.setSetting).mockResolvedValue(undefined);
   window.electron.broadcastThemeChange = vi.fn();
+  window.electron.listThemePacks = vi.fn().mockResolvedValue([]);
+  window.electron.importThemePack = vi.fn();
+  window.electron.removeThemePack = vi.fn().mockResolvedValue(true);
+  registerThemePacks([]);
   window.matchMedia = vi
     .fn()
     .mockReturnValue({ matches: false, addEventListener: vi.fn(), removeEventListener: vi.fn() });
@@ -82,5 +88,47 @@ describe('township theme and account settings', () => {
     await user.click(screen.getByRole('button', { name: 'Save profile' }));
     expect(await screen.findByRole('alert')).toHaveTextContent('Could not save the profile');
     expect(screen.getByRole('dialog')).toBeInTheDocument();
+  });
+
+  it('imports a theme pack, applies its chat styles, and falls back when it is removed', async () => {
+    const user = userEvent.setup();
+    let installed: (typeof themePackTemplate)[] = [];
+    vi.mocked(window.electron.listThemePacks).mockImplementation(async () => installed);
+    vi.mocked(window.electron.importThemePack).mockImplementation(async () => {
+      installed = [themePackTemplate];
+      return { status: 'imported', pack: themePackTemplate };
+    });
+    vi.mocked(window.electron.removeThemePack).mockImplementation(async () => {
+      installed = [];
+      return true;
+    });
+    renderSettings(<ThemeCenter />);
+    await user.click(await screen.findByRole('button', { name: 'Import theme pack' }));
+    expect(await screen.findByRole('status')).toHaveTextContent('Imported 金色党建');
+    await user.click(screen.getByRole('button', { name: 'Light · 金色党建' }));
+    await waitFor(() =>
+      expect(document.documentElement.dataset.theme).toBe('jinse-dangjian-light')
+    );
+    expect(document.documentElement.style.getPropertyValue('--chat-composer-min-height')).toBe(
+      '110px'
+    );
+    expect(window.electron.setSetting).toHaveBeenCalledWith('theme', 'jinse-dangjian-light');
+    await user.click(screen.getByRole('button', { name: 'Remove 金色党建' }));
+    await waitFor(() => expect(document.documentElement.dataset.theme).toBe('light'));
+    expect(screen.queryByRole('button', { name: 'Light · 金色党建' })).not.toBeInTheDocument();
+  });
+
+  it('reports an invalid pack without changing the theme', async () => {
+    const user = userEvent.setup();
+    vi.mocked(window.electron.importThemePack).mockResolvedValue({
+      status: 'invalid',
+      error: 'Unsupported key "--x" in variants.light.tokens',
+    });
+    renderSettings(<ThemeCenter />);
+    await user.click(await screen.findByRole('button', { name: 'Import theme pack' }));
+    expect(await screen.findByRole('status')).toHaveTextContent(
+      'Could not import: Unsupported key'
+    );
+    expect(document.documentElement.dataset.theme).toBe('light');
   });
 });

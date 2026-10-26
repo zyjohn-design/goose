@@ -61,6 +61,13 @@ import { openExternalUrl } from './utils/openExternalUrl';
 import { buildCSP, leaseBackendOrigin, shouldApplyRendererCsp } from './utils/csp';
 import { resolveWorkingDir } from './utils/workingDir';
 import {
+  listThemePacks,
+  readThemePackFile,
+  removeThemePack,
+  saveThemePack,
+} from './utils/themePackStore';
+import type { ThemePackImportResult } from './theme/theme-pack';
+import {
   DesktopFileAccess,
   isAuthorizedFileAccessRequest,
   readSelectedRecipe,
@@ -179,6 +186,7 @@ function translateMenuLabels(items: MenuItem[]): void {
 
 // Settings management
 const SETTINGS_FILE = path.join(app.getPath('userData'), 'settings.json');
+const THEME_PACKS_DIR = path.join(app.getPath('userData'), 'themes');
 const STARTUP_LOGS_DIR = path.join(app.getPath('userData'), 'logs', 'startup');
 const validLanguageSettings = new Set<Settings['language']>([
   'system',
@@ -1911,6 +1919,28 @@ ipcMain.handle('list-recent-dirs', () => {
 ipcMain.handle('list-git-worktree-dirs', async (_event, dir: string) => {
   return await listGitWorktreeDirs(dir);
 });
+
+ipcMain.handle('list-theme-packs', () => listThemePacks(THEME_PACKS_DIR));
+
+ipcMain.handle('import-theme-pack', async (event): Promise<ThemePackImportResult> => {
+  const window = BrowserWindow.fromWebContents(event.sender);
+  const options: OpenDialogOptions = {
+    properties: ['openFile'],
+    filters: [{ name: 'Theme pack', extensions: ['json'] }],
+  };
+  const result = (await (window
+    ? dialog.showOpenDialog(window, options)
+    : dialog.showOpenDialog(options))) as unknown as OpenDialogReturnValue;
+  if (result.canceled || result.filePaths.length === 0) return { status: 'canceled' };
+  const parsed = await readThemePackFile(result.filePaths[0]);
+  if (!parsed.ok) return { status: 'invalid', error: parsed.error };
+  await saveThemePack(THEME_PACKS_DIR, parsed.pack);
+  return { status: 'imported', pack: parsed.pack };
+});
+
+ipcMain.handle('remove-theme-pack', (_event, id: unknown) =>
+  typeof id === 'string' ? removeThemePack(THEME_PACKS_DIR, id) : false
+);
 
 ipcMain.handle('get-setting', (_event, key: SettingKey) => {
   const settings = getSettings();

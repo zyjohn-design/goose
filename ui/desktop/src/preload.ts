@@ -3,7 +3,8 @@ import { Recipe } from './recipe';
 import type { GooseApp } from './types/apps';
 import type { Settings, SettingKey } from './utils/settings';
 import { defaultSettings } from './utils/settings';
-import { isThemeId } from './theme/theme-tokens';
+import { isThemeIdFormat } from './theme/theme-tokens';
+import type { ThemePack, ThemePackImportResult } from './theme/theme-pack';
 import type { OpenExternalUrlResult } from './utils/urlSecurity';
 
 // Mapping from settings keys to their old localStorage keys for lazy migration
@@ -23,7 +24,7 @@ function parseLocalStorageValue<K extends SettingKey>(
   try {
     switch (key) {
       case 'theme':
-        return (isThemeId(rawValue) ? rawValue : null) as Settings[K];
+        return (isThemeIdFormat(rawValue) ? rawValue : null) as Settings[K];
       case 'useSystemTheme':
         return (rawValue === 'true') as unknown as Settings[K];
       case 'responseStyle':
@@ -133,6 +134,9 @@ type ElectronAPI = {
   getDockIconState: () => Promise<boolean>;
   getSetting: <K extends SettingKey>(key: K) => Promise<Settings[K]>;
   setSetting: <K extends SettingKey>(key: K, value: Settings[K]) => Promise<void>;
+  listThemePacks: () => Promise<ThemePack[]>;
+  importThemePack: () => Promise<ThemePackImportResult>;
+  removeThemePack: (id: string) => Promise<boolean>;
   getSecretKey: () => Promise<string | null>;
   getAcpUrl: () => Promise<string | null>;
   setWakelock: (enable: boolean) => Promise<boolean>;
@@ -259,6 +263,9 @@ const electronAPI: ElectronAPI = {
     }
     return ipcRenderer.invoke('set-setting', key, value);
   },
+  listThemePacks: () => ipcRenderer.invoke('list-theme-packs'),
+  importThemePack: () => ipcRenderer.invoke('import-theme-pack'),
+  removeThemePack: (id: string) => ipcRenderer.invoke('remove-theme-pack', id),
   getSecretKey: () => ipcRenderer.invoke('get-secret-key'),
   getAcpUrl: () => ipcRenderer.invoke('get-acp-url'),
   setWakelock: (enable: boolean) => ipcRenderer.invoke('set-wakelock', enable),

@@ -18,6 +18,17 @@ import type {
   McpUiStyleVariableKey,
   McpUiStyles,
 } from '@modelcontextprotocol/ext-apps/app-bridge';
+import {
+  chatComponentKeys,
+  isThemePackId,
+  parseThemePack,
+  type ChatComponentKey,
+  type ChatComponentTokens,
+  type ThemePack,
+  type ThemeVariant,
+} from './theme-pack';
+
+export type { ThemeVariant } from './theme-pack';
 
 type ThemeTokens = Record<McpUiStyleVariableKey, string>;
 
@@ -280,13 +291,17 @@ export const auraTokens: ThemeTokens = { ...baseTokens, ...auraFontTokens, ...au
 // is a single entry here plus its token map above.
 // ---------------------------------------------------------------------------
 export type TownshipThemeFamily = 'civic' | 'navy' | 'forest';
-export type ThemeId = 'light' | 'dark' | 'aura' | `${TownshipThemeFamily}-${ThemeVariant}`;
-export type ThemeVariant = 'light' | 'dark';
+export type BuiltinThemeId = 'light' | 'dark' | 'aura' | `${TownshipThemeFamily}-${ThemeVariant}`;
+// Imported theme packs register `${packId}-${variant}` ids at runtime.
+export type ThemeId = BuiltinThemeId | (string & {});
 
-interface ThemeDefinition {
+export interface ThemeDefinition {
   variant: ThemeVariant;
   tokens: ThemeTokens;
+  components: ChatComponentTokens;
 }
+
+export const themeTokenKeys: ReadonlySet<string> = new Set(Object.keys(lightTokens));
 
 export const townshipThemeFamilies = [
   { id: 'civic', name: '朱砂政务', description: '庄重典雅 · 朱砂与暖白', accent: '#A52830' },
@@ -323,97 +338,189 @@ function townshipTokens(
   };
 }
 
-export const themes: Record<ThemeId, ThemeDefinition> = {
-  light: { variant: 'light', tokens: lightTokens },
-  dark: { variant: 'dark', tokens: darkTokens },
-  aura: { variant: 'dark', tokens: auraTokens },
-  'civic-light': {
-    variant: 'light',
-    tokens: townshipTokens(
-      'light',
-      '#A52830',
-      '#F7F5F1',
-      '#FFFFFF',
-      '#F7EDEE',
-      '#252B32',
-      '#636974',
-      '#E4E1DA'
-    ),
-  },
-  'civic-dark': {
-    variant: 'dark',
-    tokens: townshipTokens(
-      'dark',
-      '#A52830',
-      '#19191C',
-      '#232326',
-      '#343035',
-      '#EEEAE4',
-      '#B8B3BA',
-      '#4C464D'
-    ),
-  },
-  'navy-light': {
-    variant: 'light',
-    tokens: townshipTokens(
-      'light',
-      '#234F78',
-      '#F3F6FA',
-      '#FFFFFF',
-      '#E7EEF7',
-      '#152A3D',
-      '#57677A',
-      '#DCE3EC'
-    ),
-  },
-  'navy-dark': {
-    variant: 'dark',
-    tokens: townshipTokens(
-      'dark',
-      '#234F78',
-      '#111B29',
-      '#1A293B',
-      '#273D56',
-      '#E8EEF6',
-      '#ACBED2',
-      '#3B526C'
-    ),
-  },
-  'forest-light': {
-    variant: 'light',
-    tokens: townshipTokens(
-      'light',
-      '#285D50',
-      '#F5F5EF',
-      '#FFFFFF',
-      '#E8F0EA',
-      '#25332D',
-      '#596B60',
-      '#DEE5DC'
-    ),
-  },
-  'forest-dark': {
-    variant: 'dark',
-    tokens: townshipTokens(
-      'dark',
-      '#285D50',
-      '#131E1A',
-      '#1D2C26',
-      '#2A4035',
-      '#E9EEE8',
-      '#A9C1B2',
-      '#3E584A'
-    ),
-  },
+function townshipTheme(
+  variant: ThemeVariant,
+  accent: string,
+  canvas: string,
+  surface: string,
+  elevated: string,
+  text: string,
+  secondary: string,
+  border: string
+): ThemeDefinition {
+  return {
+    variant,
+    tokens: townshipTokens(variant, accent, canvas, surface, elevated, text, secondary, border),
+    components: {
+      '--chat-user-bubble-bg': accent,
+      '--chat-user-bubble-text': '#FFFFFF',
+      '--chat-user-bubble-radius': '12px 4px 12px 12px',
+      '--chat-agent-bubble-bg': surface,
+      '--chat-agent-bubble-border': border,
+      '--chat-agent-bubble-radius': '10px',
+      '--chat-agent-bubble-padding': '14px 16px',
+      '--chat-tool-card-bg': surface,
+      '--chat-tool-card-border': border,
+      '--chat-tool-card-radius': '10px',
+      '--chat-composer-bg': surface,
+      '--chat-composer-border': border,
+      '--chat-composer-radius': '14px',
+      '--chat-composer-shadow':
+        variant === 'light' ? '0 6px 24px rgba(0, 0, 0, 0.05)' : '0 6px 24px rgba(0, 0, 0, 0.25)',
+      '--chat-composer-min-height': '96px',
+    },
+  };
+}
+
+export const themes: Record<BuiltinThemeId, ThemeDefinition> = {
+  light: { variant: 'light', tokens: lightTokens, components: {} },
+  dark: { variant: 'dark', tokens: darkTokens, components: {} },
+  aura: { variant: 'dark', tokens: auraTokens, components: {} },
+  'civic-light': townshipTheme(
+    'light',
+    '#A52830',
+    '#F7F5F1',
+    '#FFFFFF',
+    '#F7EDEE',
+    '#252B32',
+    '#636974',
+    '#E4E1DA'
+  ),
+  'civic-dark': townshipTheme(
+    'dark',
+    '#A52830',
+    '#19191C',
+    '#232326',
+    '#343035',
+    '#EEEAE4',
+    '#B8B3BA',
+    '#4C464D'
+  ),
+  'navy-light': townshipTheme(
+    'light',
+    '#234F78',
+    '#F3F6FA',
+    '#FFFFFF',
+    '#E7EEF7',
+    '#152A3D',
+    '#57677A',
+    '#DCE3EC'
+  ),
+  'navy-dark': townshipTheme(
+    'dark',
+    '#234F78',
+    '#111B29',
+    '#1A293B',
+    '#273D56',
+    '#E8EEF6',
+    '#ACBED2',
+    '#3B526C'
+  ),
+  'forest-light': townshipTheme(
+    'light',
+    '#285D50',
+    '#F5F5EF',
+    '#FFFFFF',
+    '#E8F0EA',
+    '#25332D',
+    '#596B60',
+    '#DEE5DC'
+  ),
+  'forest-dark': townshipTheme(
+    'dark',
+    '#285D50',
+    '#131E1A',
+    '#1D2C26',
+    '#2A4035',
+    '#E9EEE8',
+    '#A9C1B2',
+    '#3E584A'
+  ),
 };
 
+const packThemes = new Map<string, ThemeDefinition>();
+const ACTIVE_PACK_CACHE_KEY = 'theme_pack_cache';
+
+export function themeIdsForPack(pack: ThemePack): string[] {
+  return (['light', 'dark'] as const)
+    .filter((variant) => pack.variants[variant])
+    .map((variant) => `${pack.id}-${variant}`);
+}
+
+function packThemeDefinitions(pack: ThemePack): [string, ThemeDefinition][] {
+  return (['light', 'dark'] as const).flatMap((variant) => {
+    const definition = pack.variants[variant];
+    if (!definition) return [];
+    return [
+      [
+        `${pack.id}-${variant}`,
+        {
+          variant,
+          tokens: { ...(variant === 'light' ? lightTokens : darkTokens), ...definition.tokens },
+          components: definition.components,
+        },
+      ],
+    ];
+  });
+}
+
+export function registerThemePacks(packs: ThemePack[]): void {
+  packThemes.clear();
+  for (const pack of packs) {
+    for (const [id, definition] of packThemeDefinitions(pack)) packThemes.set(id, definition);
+  }
+}
+
+export function parseHostThemePack(input: unknown) {
+  return parseThemePack(input, themeTokenKeys);
+}
+
+// The active pack is cached so the pre-paint path can apply it before IPC is available.
+export function cacheActiveThemePack(pack: ThemePack | undefined): void {
+  if (pack) localStorage.setItem(ACTIVE_PACK_CACHE_KEY, JSON.stringify(pack));
+  else localStorage.removeItem(ACTIVE_PACK_CACHE_KEY);
+}
+
+function registerCachedThemePack(): void {
+  if (packThemes.size > 0) return;
+  const cached = localStorage.getItem(ACTIVE_PACK_CACHE_KEY);
+  if (!cached) return;
+  try {
+    const result = parseHostThemePack(JSON.parse(cached));
+    if (result.ok) registerThemePacks([result.pack]);
+  } catch {
+    localStorage.removeItem(ACTIVE_PACK_CACHE_KEY);
+  }
+}
+
+export function getThemeDefinition(id: unknown): ThemeDefinition | undefined {
+  if (typeof id !== 'string') return undefined;
+  if (Object.hasOwn(themes, id)) return themes[id as BuiltinThemeId];
+  return packThemes.get(id);
+}
+
 export function isThemeId(value: unknown): value is ThemeId {
-  return typeof value === 'string' && Object.hasOwn(themes, value);
+  return getThemeDefinition(value) !== undefined;
+}
+
+export function isThemeIdFormat(value: unknown): value is ThemeId {
+  if (isThemeId(value)) return true;
+  if (typeof value !== 'string') return false;
+  const match = /^(.+)-(light|dark)$/.exec(value);
+  return !!match && isThemePackId(match[1]);
+}
+
+export function themeFamilyId(themeId: ThemeId): string | undefined {
+  const match = /^(.+)-(light|dark)$/.exec(themeId);
+  return match?.[1];
 }
 
 export function resolveSystemTheme(savedTheme: ThemeId, variant: ThemeVariant): ThemeId {
-  const family = townshipThemeFamilies.find(({ id }) => savedTheme.startsWith(`${id}-`));
-  return family ? `${family.id}-${variant}` : variant;
+  const family = themeFamilyId(savedTheme);
+  if (!family) return variant;
+  const candidate = `${family}-${variant}`;
+  if (isThemeId(candidate)) return candidate;
+  return isThemeId(savedTheme) ? savedTheme : variant;
 }
 
 // ---------------------------------------------------------------------------
@@ -464,7 +571,7 @@ const HOST_FONT_CSS = `
  * css.fonts provides @font-face rules so sandboxed apps can load host fonts.
  */
 export function buildMcpHostStyles(themeId: ThemeId = 'light'): McpUiHostStyles {
-  const tokens = (themes[themeId] ?? themes.light).tokens;
+  const tokens = (getThemeDefinition(themeId) ?? themes.light).tokens;
   const isBuiltinVariant = themeId === 'light' || themeId === 'dark';
   const variables: McpUiStyles = {} as McpUiStyles;
   for (const key of Object.keys(lightTokens) as McpUiStyleVariableKey[]) {
@@ -483,6 +590,7 @@ export function buildMcpHostStyles(themeId: ThemeId = 'light'): McpUiHostStyles 
  * Electron settings store and is applied by ThemeContext once loaded.
  */
 export function getResolvedTheme(): ThemeId {
+  registerCachedThemePack();
   const stored = localStorage.getItem('theme');
   const savedTheme = isThemeId(stored) ? stored : 'light';
   const useSystem = localStorage.getItem('use_system_theme') !== 'false';
@@ -501,9 +609,16 @@ export function getResolvedTheme(): ThemeId {
  */
 export function applyThemeTokens(theme?: ThemeId): void {
   const resolved = theme ?? getResolvedTheme();
-  const { tokens } = themes[resolved] ?? themes.light;
+  const { tokens, components } = getThemeDefinition(resolved) ?? themes.light;
   const root = document.documentElement;
   for (const [key, value] of Object.entries(tokens)) {
     root.style.setProperty(key, value);
   }
+  for (const key of Object.keys(chatComponentKeys) as ChatComponentKey[]) {
+    const value = components[key];
+    if (value) root.style.setProperty(key, value);
+    else root.style.removeProperty(key);
+  }
+  if (Object.keys(components).length > 0) root.dataset.chatSkin = '';
+  else delete root.dataset.chatSkin;
 }

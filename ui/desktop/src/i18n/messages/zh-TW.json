@@ -4829,11 +4829,35 @@
   "township.themes.description": {
     "defaultMessage": "Three civic palettes, each with light and dark appearances. Changes are saved automatically."
   },
+  "township.themes.downloadTemplate": {
+    "defaultMessage": "下載主題包範本"
+  },
+  "township.themes.importPack": {
+    "defaultMessage": "匯入主題包"
+  },
+  "township.themes.imported": {
+    "defaultMessage": "已匯入主題包"
+  },
+  "township.themes.importedNotice": {
+    "defaultMessage": "已匯入 {name}"
+  },
+  "township.themes.invalidPack": {
+    "defaultMessage": "匯入失敗：{error}"
+  },
   "township.themes.light": {
     "defaultMessage": "Light"
   },
+  "township.themes.noPacks": {
+    "defaultMessage": "尚未匯入主題包。主題包是 JSON 檔案，可設定顏色與對話元件樣式。"
+  },
   "township.themes.original": {
     "defaultMessage": "Original Goose themes"
+  },
+  "township.themes.packMeta": {
+    "defaultMessage": "v{version} · {author}"
+  },
+  "township.themes.removePack": {
+    "defaultMessage": "移除 {name}"
   },
   "township.themes.system": {
     "defaultMessage": "Follow system with the current palette"

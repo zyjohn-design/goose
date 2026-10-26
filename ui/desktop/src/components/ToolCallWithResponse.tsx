@@ -262,6 +262,8 @@ export default function ToolCallWithResponse({
   return (
     <>
       <div
+        data-slot="tool-card"
+        data-approval={showInlineApproval ? '' : undefined}
         className={cn(
           'w-full text-sm font-sans rounded-lg overflow-hidden border',
           showInlineApproval ? 'border-amber-500/50 bg-amber-50/5' : 'border-border-primary'

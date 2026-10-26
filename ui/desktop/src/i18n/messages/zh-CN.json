@@ -4829,11 +4829,35 @@
   "township.themes.description": {
     "defaultMessage": "三套政务主题，均支持浅色与深色。切换后自动保存。"
   },
+  "township.themes.downloadTemplate": {
+    "defaultMessage": "下载主题包模板"
+  },
+  "township.themes.importPack": {
+    "defaultMessage": "导入主题包"
+  },
+  "township.themes.imported": {
+    "defaultMessage": "已导入主题包"
+  },
+  "township.themes.importedNotice": {
+    "defaultMessage": "已导入 {name}"
+  },
+  "township.themes.invalidPack": {
+    "defaultMessage": "导入失败：{error}"
+  },
   "township.themes.light": {
     "defaultMessage": "浅色 Light"
   },
+  "township.themes.noPacks": {
+    "defaultMessage": "尚未导入主题包。主题包是 JSON 文件，可设置颜色和对话组件样式。"
+  },
   "township.themes.original": {
     "defaultMessage": "Goose 原生主题"
+  },
+  "township.themes.packMeta": {
+    "defaultMessage": "v{version} · {author}"
+  },
+  "township.themes.removePack": {
+    "defaultMessage": "移除 {name}"
   },
   "township.themes.system": {
     "defaultMessage": "跟随系统，保留当前配色"

@@ -989,3 +989,53 @@ pre:has(> code.bg-inline-code) {
   background-color: #393647;
   color: #edecee;
 }
+
+/* ═══════════════════════════════════════════════════════════
+   CHAT COMPONENT SLOTS
+   Theme packs and township themes set --chat-* variables; the
+   data-chat-skin flag is only present when a theme defines them, so
+   the original Goose themes keep their existing chat styling.
+   ═══════════════════════════════════════════════════════════ */
+:root[data-chat-skin] .user-message-bubble {
+  background-color: var(--chat-user-bubble-bg, var(--color-text-primary));
+  color: var(--chat-user-bubble-text, var(--color-background-primary));
+  border-radius: var(--chat-user-bubble-radius, 0.75rem);
+}
+
+:root[data-chat-skin] .user-message :is(h1, h2, h3, h4, h5, h6, strong, li, a, em) {
+  color: inherit !important;
+}
+
+:root[data-chat-skin] .agent-message-bubble {
+  background-color: var(--chat-agent-bubble-bg, transparent);
+  border: 1px solid var(--chat-agent-bubble-border, transparent);
+  border-radius: var(--chat-agent-bubble-radius, 0.75rem);
+  padding: var(--chat-agent-bubble-padding, 0.625rem 1rem);
+}
+
+:root[data-chat-skin] [data-slot='tool-card']:not([data-approval]) {
+  background-color: var(--chat-tool-card-bg, transparent);
+  border-color: var(--chat-tool-card-border, var(--color-border-primary));
+  border-radius: var(--chat-tool-card-radius, 0.5rem);
+}
+
+:root[data-chat-skin] [data-slot='composer'] {
+  background-color: var(--chat-composer-bg, var(--color-background-primary));
+  border-color: var(--chat-composer-border, var(--color-border-primary));
+  border-radius: var(--chat-composer-radius, 1rem);
+  box-shadow: var(--chat-composer-shadow, none);
+}
+
+:root[data-chat-skin] [data-slot='composer'] > * {
+  background-color: transparent;
+}
+
+:root[data-chat-skin] [data-slot='composer']:focus-within {
+  border-color: var(--color-ring-primary, var(--chat-composer-border));
+}
+
+:root[data-chat-skin] [data-slot='composer'] #dynamic-textarea {
+  min-height: var(--chat-composer-min-height, 38px) !important;
+  font-size: 0.9375rem;
+  line-height: 1.7;
+}
