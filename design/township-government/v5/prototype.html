@@ -202,7 +202,7 @@ dl{display:grid;grid-template-columns:90px 1fr;gap:8px 12px;margin:0;font-size:1
   <nav aria-label="主导航">
     <button><svg><use href="#i-home"/></svg>工作台</button>
     <button class="on" aria-current="page"><svg><use href="#i-chat"/></svg>对话</button>
-    <button><svg><use href="#i-folder"/></svg>文档管理</button>
+    <button onclick="location.href='documents.html?theme='+document.documentElement.dataset.theme+'&mode='+document.documentElement.dataset.mode"><svg><use href="#i-folder"/></svg>文档管理</button>
     <button><svg><use href="#i-book"/></svg>配方中心</button>
     <button><svg><use href="#i-star"/></svg>技能中心</button>
     <button><svg><use href="#i-grid"/></svg>应用中心</button>
@@ -295,7 +295,7 @@ dl{display:grid;grid-template-columns:90px 1fr;gap:8px 12px;margin:0;font-size:1
   <aside class="drawer" id="drawer" aria-label="文件预览">
     <div class="dh"><span class="ft docx" id="dIcon">DOCX</span><b id="dName">工作通知初稿.docx</b><span class="chip" id="dVer">V3</span>
       <button class="ghost" data-toast="已开始下载（原型）"><svg><use href="#i-down"/></svg>下载</button>
-      <button class="ghost" data-toast="将在文档管理中定位该文件（原型）"><svg><use href="#i-folder"/></svg>在文档管理中打开</button>
+      <button class="ghost" onclick="location.href='documents.html?doc=1&theme='+document.documentElement.dataset.theme+'&mode='+document.documentElement.dataset.mode"><svg><use href="#i-folder"/></svg>在文档管理中打开</button>
       <button class="ghost" id="close" aria-label="关闭预览"><svg><use href="#i-x"/></svg></button></div>
     <div class="tabs" role="tablist"><button role="tab" data-tab="preview" aria-selected="true">预览</button><button role="tab" data-tab="comments" aria-selected="false">批注 <span class="chip" id="cCount">2</span></button><button role="tab" data-tab="versions" aria-selected="false">版本</button><button role="tab" data-tab="info" aria-selected="false">信息</button></div>
     <div class="dbody" id="dbody"></div>
