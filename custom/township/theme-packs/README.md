@@ -4,6 +4,8 @@
 
 示例：[jinse-dangjian.json](jinse-dangjian.json)。主题中心的“下载主题包模板”按钮下载的也是这份文件。
 
+内置的朱砂政务、深蓝政务、青山雅政三套主题也是同一格式的主题包，定义在 `ui/desktop/src/theme/packs/{civic,navy,forest}.json`，颜色与 UI 设计稿 `design/township-government/v6` 一一对应。新主题可以直接复制其中一份改起。
+
 ## 结构
 
 | 字段 | 说明 |
@@ -16,10 +18,13 @@
 | `variants.*.tokens` | 覆盖基础设计 token，例如 `--color-background-primary`、`--color-text-primary`、`--font-sans`；没写的 token 继承 Goose 原生的 light/dark。这些 token 也会同步给 MCP 应用 |
 | `variants.*.components` | 对话组件样式插槽，见下表 |
 
-## 对话组件插槽
+## 组件插槽
 
 | 变量 | 作用 |
 | --- | --- |
+| `--brand-accent` / `--brand-accent-soft` / `--brand-secondary` | 品牌主色、浅底色、辅助色（金色点缀） |
+| `--nav-bg` / `--nav-text` | 左侧导航背景与文字 |
+| `--nav-active-bg` / `--nav-active-text` / `--nav-active-indicator` | 导航选中项背景、文字和左侧指示条（不需要指示条时写 `transparent`） |
 | `--chat-user-bubble-bg` / `-text` / `-radius` | 用户消息气泡 |
 | `--chat-agent-bubble-bg` / `-border` / `-radius` / `-padding` | 助手回复卡片 |
 | `--chat-tool-card-bg` / `-border` / `-radius` | 工具调用、MCP 结果卡片（待审批的卡片仍使用审批专用样式） |

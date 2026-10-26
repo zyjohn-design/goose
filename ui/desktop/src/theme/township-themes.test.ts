@@ -5,6 +5,7 @@ import {
   isThemeId,
   resolveSystemTheme,
   themes,
+  townshipThemePacks,
 } from './theme-tokens';
 
 afterEach(() => {
@@ -42,5 +43,20 @@ describe('township themes', () => {
     expect(buildMcpHostStyles('light').variables?.['--color-background-primary']).toContain(
       'light-dark('
     );
+  });
+
+  it('builds every built-in theme from its pack JSON, including navigation slots', () => {
+    expect(townshipThemePacks.map((pack) => pack.id)).toEqual(['civic', 'navy', 'forest']);
+    for (const pack of townshipThemePacks)
+      for (const variant of ['light', 'dark'] as const) {
+        const source = pack.variants[variant]!;
+        const theme = themes[`${pack.id}-${variant}` as keyof typeof themes];
+        expect(theme.variant).toBe(variant);
+        expect(theme.tokens['--color-background-primary']).toBe(
+          source.tokens?.['--color-background-primary']
+        );
+        expect(theme.components).toEqual(source.components);
+        expect(theme.components['--nav-active-bg']).toBeTruthy();
+      }
   });
 });

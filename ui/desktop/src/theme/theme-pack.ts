@@ -6,6 +6,14 @@ export const MAX_THEME_PACK_BYTES = 256 * 1024;
 type ValueKind = 'color' | 'length' | 'spacing' | 'shadow' | 'font' | 'weight' | 'composerHeight';
 
 export const chatComponentKeys = {
+  '--brand-accent': 'color',
+  '--brand-accent-soft': 'color',
+  '--brand-secondary': 'color',
+  '--nav-bg': 'color',
+  '--nav-text': 'color',
+  '--nav-active-bg': 'color',
+  '--nav-active-text': 'color',
+  '--nav-active-indicator': 'color',
   '--chat-user-bubble-bg': 'color',
   '--chat-user-bubble-text': 'color',
   '--chat-user-bubble-radius': 'spacing',
@@ -141,7 +149,8 @@ function parseValues<K extends string>(
 
 export function parseThemePack(
   input: unknown,
-  allowedTokenKeys: ReadonlySet<string>
+  allowedTokenKeys: ReadonlySet<string>,
+  { builtin = false }: { builtin?: boolean } = {}
 ): ThemePackParseResult {
   try {
     if (!isRecord(input)) throw new Error('Theme pack must be a JSON object');
@@ -163,7 +172,10 @@ export function parseThemePack(
     if (input.schemaVersion !== THEME_PACK_SCHEMA_VERSION) {
       throw new Error(`"schemaVersion" must be ${THEME_PACK_SCHEMA_VERSION}`);
     }
-    if (!isThemePackId(input.id)) {
+    const id = input.id;
+    const validId =
+      typeof id === 'string' && (builtin ? packIdPattern.test(id) : isThemePackId(id));
+    if (!validId) {
       throw new Error(
         '"id" must be 2-48 lowercase letters, digits or hyphens and not a built-in name'
       );
@@ -207,7 +219,7 @@ export function parseThemePack(
       ok: true,
       pack: {
         schemaVersion: THEME_PACK_SCHEMA_VERSION,
-        id: input.id,
+        id,
         name: name.trim(),
         version,
         author: optionalText(input.author, 'author', 120),

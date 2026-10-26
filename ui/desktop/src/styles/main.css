@@ -1039,3 +1039,26 @@ pre:has(> code.bg-inline-code) {
   font-size: 0.9375rem;
   line-height: 1.7;
 }
+
+:root[data-chat-skin] [data-slot='nav'] {
+  background-color: var(--nav-bg, var(--color-background-primary));
+  color: var(--nav-text, var(--color-text-primary));
+}
+
+:root[data-chat-skin] [data-slot='nav'] :is(button, span, svg) {
+  color: inherit;
+}
+
+:root[data-chat-skin] [data-slot='nav-item'] {
+  border-radius: var(--border-radius-md, 8px);
+}
+
+:root[data-chat-skin] [data-slot='nav-item']:hover {
+  background-color: color-mix(in srgb, var(--brand-accent, currentColor) 10%, transparent);
+}
+
+:root[data-chat-skin] [data-slot='nav-item'][data-active] {
+  background-color: var(--nav-active-bg, var(--color-background-tertiary));
+  color: var(--nav-active-text, var(--color-text-primary));
+  box-shadow: inset 3px 0 var(--nav-active-indicator, transparent);
+}
