@@ -27,6 +27,9 @@ import {
   type ThemePack,
   type ThemeVariant,
 } from './theme-pack';
+import civicPack from './packs/civic.json';
+import forestPack from './packs/forest.json';
+import navyPack from './packs/navy.json';
 
 export type { ThemeVariant } from './theme-pack';
 
@@ -303,140 +306,29 @@ export interface ThemeDefinition {
 
 export const themeTokenKeys: ReadonlySet<string> = new Set(Object.keys(lightTokens));
 
-export const townshipThemeFamilies = [
-  { id: 'civic', name: '朱砂政务', description: '庄重典雅 · 朱砂与暖白', accent: '#A52830' },
-  { id: 'navy', name: '深蓝政务', description: '沉稳清晰 · 深蓝与银灰', accent: '#234F78' },
-  { id: 'forest', name: '青山雅政', description: '温润有序 · 青山与米白', accent: '#285D50' },
-] as const;
+export const townshipThemePacks: readonly ThemePack[] = [civicPack, navyPack, forestPack].map(
+  (raw) => {
+    const result = parseThemePack(raw, themeTokenKeys, { builtin: true });
+    if (!result.ok) throw new Error(`Invalid built-in theme pack: ${result.error}`);
+    return result.pack;
+  }
+);
 
-function townshipTokens(
-  variant: ThemeVariant,
-  accent: string,
-  canvas: string,
-  surface: string,
-  elevated: string,
-  text: string,
-  secondary: string,
-  border: string
-): ThemeTokens {
-  return {
-    ...(variant === 'light' ? lightTokens : darkTokens),
-    '--font-sans': "'PingFang SC', 'Microsoft YaHei', 'Noto Sans CJK SC', sans-serif",
-    '--color-background-primary': surface,
-    '--color-background-secondary': canvas,
-    '--color-background-tertiary': elevated,
-    '--color-background-inverse': accent,
-    '--color-text-primary': text,
-    '--color-text-secondary': secondary,
-    '--color-text-tertiary': secondary,
-    '--color-text-ghost': secondary,
-    '--color-text-inverse': '#FFFFFF',
-    '--color-border-primary': border,
-    '--color-border-secondary': border,
-    '--color-border-tertiary': border,
-    '--color-ring-primary': accent,
-  };
-}
+export const townshipThemeFamilies = townshipThemePacks.map(
+  ({ id, name, description, accent }) => ({
+    id: id as TownshipThemeFamily,
+    name,
+    description: description ?? '',
+    accent,
+  })
+);
 
-function townshipTheme(
-  variant: ThemeVariant,
-  accent: string,
-  canvas: string,
-  surface: string,
-  elevated: string,
-  text: string,
-  secondary: string,
-  border: string
-): ThemeDefinition {
-  return {
-    variant,
-    tokens: townshipTokens(variant, accent, canvas, surface, elevated, text, secondary, border),
-    components: {
-      '--chat-user-bubble-bg': accent,
-      '--chat-user-bubble-text': '#FFFFFF',
-      '--chat-user-bubble-radius': '12px 4px 12px 12px',
-      '--chat-agent-bubble-bg': surface,
-      '--chat-agent-bubble-border': border,
-      '--chat-agent-bubble-radius': '10px',
-      '--chat-agent-bubble-padding': '14px 16px',
-      '--chat-tool-card-bg': surface,
-      '--chat-tool-card-border': border,
-      '--chat-tool-card-radius': '10px',
-      '--chat-composer-bg': surface,
-      '--chat-composer-border': border,
-      '--chat-composer-radius': '14px',
-      '--chat-composer-shadow':
-        variant === 'light' ? '0 6px 24px rgba(0, 0, 0, 0.05)' : '0 6px 24px rgba(0, 0, 0, 0.25)',
-      '--chat-composer-min-height': '96px',
-    },
-  };
-}
-
-export const themes: Record<BuiltinThemeId, ThemeDefinition> = {
+export const themes = {
   light: { variant: 'light', tokens: lightTokens, components: {} },
   dark: { variant: 'dark', tokens: darkTokens, components: {} },
   aura: { variant: 'dark', tokens: auraTokens, components: {} },
-  'civic-light': townshipTheme(
-    'light',
-    '#A52830',
-    '#F7F5F1',
-    '#FFFFFF',
-    '#F7EDEE',
-    '#252B32',
-    '#636974',
-    '#E4E1DA'
-  ),
-  'civic-dark': townshipTheme(
-    'dark',
-    '#A52830',
-    '#19191C',
-    '#232326',
-    '#343035',
-    '#EEEAE4',
-    '#B8B3BA',
-    '#4C464D'
-  ),
-  'navy-light': townshipTheme(
-    'light',
-    '#234F78',
-    '#F3F6FA',
-    '#FFFFFF',
-    '#E7EEF7',
-    '#152A3D',
-    '#57677A',
-    '#DCE3EC'
-  ),
-  'navy-dark': townshipTheme(
-    'dark',
-    '#234F78',
-    '#111B29',
-    '#1A293B',
-    '#273D56',
-    '#E8EEF6',
-    '#ACBED2',
-    '#3B526C'
-  ),
-  'forest-light': townshipTheme(
-    'light',
-    '#285D50',
-    '#F5F5EF',
-    '#FFFFFF',
-    '#E8F0EA',
-    '#25332D',
-    '#596B60',
-    '#DEE5DC'
-  ),
-  'forest-dark': townshipTheme(
-    'dark',
-    '#285D50',
-    '#131E1A',
-    '#1D2C26',
-    '#2A4035',
-    '#E9EEE8',
-    '#A9C1B2',
-    '#3E584A'
-  ),
-};
+  ...Object.fromEntries(townshipThemePacks.flatMap(packThemeDefinitions)),
+} as Record<BuiltinThemeId, ThemeDefinition>;
 
 const packThemes = new Map<string, ThemeDefinition>();
 const ACTIVE_PACK_CACHE_KEY = 'theme_pack_cache';
