@@ -10,11 +10,16 @@ import React, {
 import {
   applyThemeTokens,
   buildMcpHostStyles,
-  themes,
+  cacheActiveThemePack,
+  getThemeDefinition,
   isThemeId,
+  registerThemePacks,
   resolveSystemTheme,
+  themeFamilyId,
+  themes,
 } from '../theme/theme-tokens';
 import type { ThemeId, ThemeVariant } from '../theme/theme-tokens';
+import type { ThemePack, ThemePackImportResult } from '../theme/theme-pack';
 import type { McpUiHostStyles } from '@modelcontextprotocol/ext-apps/app-bridge';
 
 type ThemePreference = ThemeId | 'system';
@@ -26,6 +31,19 @@ interface ThemeContextValue {
   resolvedThemeId: ThemeId;
   resolvedTheme: ResolvedTheme;
   mcpHostStyles: McpUiHostStyles;
+  themePacks: ThemePack[];
+  importThemePack: () => Promise<ThemePackImportResult>;
+  removeThemePack: (id: string) => Promise<void>;
+}
+
+function variantOf(themeId: ThemeId): ThemeVariant {
+  return (getThemeDefinition(themeId) ?? themes.light).variant;
+}
+
+async function loadThemePacks(): Promise<ThemePack[]> {
+  const packs = (await window.electron.listThemePacks?.()) ?? [];
+  registerThemePacks(packs);
+  return packs;
 }
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
@@ -58,16 +76,23 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
   // Start with light theme to avoid flash, will update once settings load
   const [userThemePreference, setUserThemePreferenceState] = useState<ThemePreference>('light');
   const [resolvedThemeId, setResolvedThemeId] = useState<ThemeId>('light');
-  const resolvedTheme = themes[resolvedThemeId].variant;
-  const mcpHostStyles = useMemo(() => buildMcpHostStyles(resolvedThemeId), [resolvedThemeId]);
+  const [themePacks, setThemePacks] = useState<ThemePack[]>([]);
+  const resolvedTheme = variantOf(resolvedThemeId);
+  const mcpHostStyles = useMemo(
+    () => buildMcpHostStyles(resolvedThemeId),
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- pack edits change tokens under the same id
+    [resolvedThemeId, themePacks]
+  );
 
   useEffect(() => {
     async function loadThemeFromSettings() {
       try {
-        const [useSystemTheme, savedTheme] = await Promise.all([
+        const [useSystemTheme, savedTheme, packs] = await Promise.all([
           window.electron.getSetting('useSystemTheme'),
           window.electron.getSetting('theme'),
+          loadThemePacks().catch(() => []),
         ]);
+        setThemePacks(packs);
 
         savedThemeRef.current = isThemeId(savedTheme) ? savedTheme : 'light';
         const preference: ThemePreference = useSystemTheme ? 'system' : savedThemeRef.current;
@@ -108,7 +133,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
 
     // Broadcast to other windows via Electron
     window.electron?.broadcastThemeChange({
-      mode: themes[resolvedId].variant,
+      mode: variantOf(resolvedId),
       useSystemTheme: preference === 'system',
       theme: resolvedId,
     });
@@ -133,7 +158,17 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     if (!window.electron) return;
 
     const handleThemeChanged = (_event: unknown, ...args: unknown[]) => {
-      const themeData = args[0] as { useSystemTheme: boolean; theme: ThemeId };
+      const themeData = args[0] as {
+        useSystemTheme: boolean;
+        theme: ThemeId;
+        tokensUpdated?: boolean;
+      };
+      if (themeData.tokensUpdated) {
+        loadThemePacks()
+          .then(setThemePacks)
+          .catch(() => undefined);
+        return;
+      }
       if (!isThemeId(themeData.theme)) return;
       savedThemeRef.current = themeData.theme;
       const newPreference: ThemePreference = themeData.useSystemTheme ? 'system' : themeData.theme;
@@ -160,10 +195,46 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
 
   // Apply theme class and CSS tokens whenever the resolved theme changes
   useEffect(() => {
-    applyThemeToDocument(themes[resolvedThemeId].variant);
+    applyThemeToDocument(variantOf(resolvedThemeId));
     applyThemeTokens(resolvedThemeId);
     document.documentElement.dataset.theme = resolvedThemeId;
-  }, [resolvedThemeId]);
+    const family = themeFamilyId(resolvedThemeId);
+    cacheActiveThemePack(themePacks.find((pack) => pack.id === family));
+  }, [resolvedThemeId, themePacks]);
+
+  const importThemePack = useCallback(async () => {
+    const result = await window.electron.importThemePack();
+    if (result.status !== 'imported') return result;
+    const packs = await loadThemePacks();
+    setThemePacks(packs);
+    window.electron.broadcastThemeChange({
+      mode: variantOf(resolvedThemeId),
+      useSystemTheme: userThemePreference === 'system',
+      theme: resolvedThemeId,
+      tokensUpdated: true,
+    });
+    return result;
+  }, [resolvedThemeId, userThemePreference]);
+
+  const removeThemePack = useCallback(
+    async (id: string) => {
+      await window.electron.removeThemePack(id);
+      const packs = await loadThemePacks();
+      setThemePacks(packs);
+      if (themeFamilyId(savedThemeRef.current) === id) {
+        await setUserThemePreference(variantOf(resolvedThemeId));
+      } else {
+        setResolvedThemeId((current) => (isThemeId(current) ? current : 'light'));
+      }
+      window.electron.broadcastThemeChange({
+        mode: variantOf(resolvedThemeId),
+        useSystemTheme: userThemePreference === 'system',
+        theme: resolvedThemeId,
+        tokensUpdated: true,
+      });
+    },
+    [resolvedThemeId, setUserThemePreference, userThemePreference]
+  );
 
   const value: ThemeContextValue = {
     userThemePreference,
@@ -171,6 +242,9 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     resolvedThemeId,
     resolvedTheme,
     mcpHostStyles,
+    themePacks,
+    importThemePack,
+    removeThemePack,
   };
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;

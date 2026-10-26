@@ -14,6 +14,7 @@ export const ChatInputCard: React.FC<{
   children: React.ReactNode;
 }> = ({ className, children }) => (
   <div
+    data-slot="composer"
     className={cn(
       'rounded-2xl border border-border-primary shadow-sm overflow-hidden bg-background-primary',
       className

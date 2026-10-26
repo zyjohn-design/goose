@@ -4829,11 +4829,35 @@
   "township.themes.description": {
     "defaultMessage": "Three civic palettes, each with light and dark appearances. Changes are saved automatically."
   },
+  "township.themes.downloadTemplate": {
+    "defaultMessage": "Download pack template"
+  },
+  "township.themes.importPack": {
+    "defaultMessage": "Import theme pack"
+  },
+  "township.themes.imported": {
+    "defaultMessage": "Imported theme packs"
+  },
+  "township.themes.importedNotice": {
+    "defaultMessage": "Imported {name}"
+  },
+  "township.themes.invalidPack": {
+    "defaultMessage": "Could not import: {error}"
+  },
   "township.themes.light": {
     "defaultMessage": "Light"
   },
+  "township.themes.noPacks": {
+    "defaultMessage": "No imported packs yet. Packs are JSON files that set colors and chat component styles."
+  },
   "township.themes.original": {
     "defaultMessage": "Original Goose themes"
+  },
+  "township.themes.packMeta": {
+    "defaultMessage": "v{version} · {author}"
+  },
+  "township.themes.removePack": {
+    "defaultMessage": "Remove {name}"
   },
   "township.themes.system": {
     "defaultMessage": "Follow system with the current palette"
