@@ -4,7 +4,7 @@
 
 示例：[jinse-dangjian.json](jinse-dangjian.json)。主题中心的“下载主题包模板”按钮下载的也是这份文件。
 
-内置的朱砂政务、深蓝政务、青山雅政三套主题也是同一格式的主题包，定义在 `ui/desktop/src/theme/packs/{civic,navy,forest}.json`，颜色与 UI 设计稿 `design/township-government/v6` 一一对应。新主题可以直接复制其中一份改起。
+内置的朱砂政务、深蓝政务、青山雅政三套主题也是同一格式的主题包，定义在 `ui/desktop/src/theme/packs/{civic,navy,forest}.json`，颜色与 UI 设计稿（v6 UI 套件，单独保存在仓库之外）一一对应。新主题可以直接复制其中一份改起。
 
 ## 结构
 
