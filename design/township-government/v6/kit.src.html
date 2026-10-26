@@ -168,7 +168,7 @@ const PACKS=/*PACKS*/{};
 const q=new URLSearchParams(location.search);
 const pack=q.get('theme')||'civic',mode=q.get('mode')||'light',screen=q.get('screen')||'workbench';
 const P=PACKS[pack],V=P.variants[mode];
-const R=document.documentElement;R.dataset.pack=pack;R.style.colorScheme=mode;R.dataset.mode=mode;
+const R=document.documentElement;R.dataset.pack=pack;R.style.colorScheme=mode;R.dataset.mode=mode;if(q.get('zoom'))document.body.style.zoom=q.get('zoom');if(q.get('tile')){const [ox,oy]=q.get('tile').split(',');document.body.style.overflow='hidden';const f=document.getElementById('frame');f.style.marginLeft='-'+ox+'px';f.style.marginTop='-'+oy+'px';}
 for(const [k,v] of Object.entries({...V.tokens,...V.components}))R.style.setProperty(k,v);
 const AV=`<img src="assets/avatar-zhang.jpg" alt="张主任">`;
 const I=(n)=>`<svg><use href="#${n}"/></svg>`;
